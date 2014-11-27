@@ -6,7 +6,6 @@ from uwadmin.models import *
 class LangCodeAdmin(admin.ModelAdmin):
     list_display = ('langcode', 'langname')
     list_display_links = ('langcode',)
-    list_editable = ('langname',)
     search_fields = ('langcode', 'langname')
     actions = ['tDSync']
     def tDSync(self, request, queryset):

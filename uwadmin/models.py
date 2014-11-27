@@ -1,7 +1,7 @@
 from django.db import models
 
 class LangCode(models.Model):
-    langcode = models.CharField(max_length=10, unique=True,
+    langcode = models.CharField(max_length=25, unique=True,
         help_text="Language Code.")
     langname = models.CharField(max_length=255,
         help_text="Name of language.")

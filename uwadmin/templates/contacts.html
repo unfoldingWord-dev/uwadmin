@@ -1,0 +1,23 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}uW Admin{% endblock %}
+
+{% block body_base %}
+    <ul class="breadcrumb">
+        <li><a href="/">Home</a> <span class="divider">/</span></li>
+    </ul>
+
+    <h1>{% trans "Contacts" %}</h1>
+    <section>
+        <div class="container">
+            {% for contact in object_list %}
+                <li><a href="/contacts/{{ contact.id }}">{{ contact.name }} - {{ contact.email }}</a></li>
+            {% empty %}
+                <li>No contact yet.</li>
+            {% endfor %}
+            </ul>
+        </div>
+    </section>
+{% endblock %}

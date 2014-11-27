@@ -1,0 +1,31 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}uW Admin{% endblock %}
+
+{% block body_base %}
+    <ul class="breadcrumb">
+        <li><a href="/">Home</a> <span class="divider">/</span></li>
+    </ul>
+
+    <h1>{% trans "Contacts" %}</h1>
+    <section>
+        <div class="container">
+            <h2>{{ object.name }}</h2>
+            <p>Email: {{ object.email }}</p>
+            <p>Door43: {{ object.d43username  }}</p>
+            <p>Location: {{ object.location  }}</p>
+            <p>Phone: {{ object.phone  }}</p>
+            <p>Languages: {{  object.languages.all|join:", " }}</p>
+            <p>Relationship: {{ object.relationship  }}</p>
+            <p>Other: {{ object.other  }}</p>
+            <p>Checking Entity: {% if object.checking_entity %}
+                                <i class="icon-check"></i>
+                                {% else %}
+                                <i class="icon-remove"></i>
+                                {% endif %}
+            </p>
+        </div>
+    </section>
+{% endblock %}

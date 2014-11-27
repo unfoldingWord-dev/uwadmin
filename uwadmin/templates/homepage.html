@@ -2,7 +2,7 @@
 
 {% load i18n %}
 
-{% block head_title %}pinax-project-account{% endblock %}
+{% block head_title %}uW Admin{% endblock %}
 
 {% block body_class %}home{% endblock %}
 
@@ -17,10 +17,9 @@
                 {% endblocktrans %}
             </p>
             {% if user.is_authenticated %}
-            {% url "what_next" as what_next_url %}
-            {% blocktrans %}<a href="{{ what_next_url }}" class="btn btn-primary large">Contacts</a>{% endblocktrans %}
-            {% blocktrans %}<a href="{{ what_next_url }}" class="btn btn-primary large">Tracking</a>{% endblocktrans %}
-            {% blocktrans %}<a href="{{ what_next_url }}" class="btn btn-primary large">Publishing</a>{% endblocktrans %}
+            {% blocktrans %}<a href="/contacts/" class="btn btn-primary large">Contacts</a>{% endblocktrans %}
+            {% blocktrans %}<a href="/tracking/" class="btn btn-primary large">Tracking</a>{% endblocktrans %}
+            {% blocktrans %}<a href="/publishing/" class="btn btn-primary large">Publishing</a>{% endblocktrans %}
             {% else %}
             <p>
                 {% blocktrans %}
