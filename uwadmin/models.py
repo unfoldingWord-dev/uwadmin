@@ -1,4 +1,12 @@
 from django.db import models
+from django.contrib.auth.models import User
+
+CHECKING_LEVEL_CHOICES = (
+  (1, '1'),
+  (2, '2'),
+  (3, '3'),
+)
+
 
 class LangCode(models.Model):
     langcode = models.CharField(max_length=25, unique=True,
@@ -41,7 +49,7 @@ class RecentCommunication(models.Model):
     communication = models.TextField(blank=True, help_text="Communication.")
     created = models.DateField(auto_now_add=True,
         help_text="Time when entry was added.")
-    created_by = models.CharField(max_length=50,
+    created_by = models.ForeignKey(User,
         help_text="User who added this entry.")
     class Meta:
         ordering = ('contact', 'created')
@@ -59,10 +67,8 @@ class OBSTracking(models.Model):
         help_text="Time when entry was added.")
     last_modified = models.DateTimeField(auto_now=True,
         help_text="Time when entry was last modified.")
-    created_by = models.CharField(max_length=50,
+    created_by = models.ForeignKey(User,
         help_text="User who added this entry.")
-    updated_by = models.CharField(max_length=50,
-        help_text="User who last updated this entry.")
     class Meta:
         ordering = ('lang', 'contact')
     def __unicode__(self):
@@ -80,18 +86,16 @@ class OBSPublishing(models.Model):
     checking_entity = models.ManyToManyField(Contact,
         related_name="OBSPublishing",
         help_text="Checking entities for this translation.")
-    contributors = models.CharField(max_length=255,
+    contributors = models.ManyToManyField(Contact,
         help_text="List of door43 usernames.")
-    checking_level = models.IntegerField()
+    checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES)
     comments = models.TextField(blank=True)
     created = models.DateField(auto_now_add=True,
         help_text="Time when entry was added.")
     last_modified = models.DateTimeField(auto_now=True,
         help_text="Time when entry was last modified.")
-    created_by = models.CharField(max_length=50,
+    created_by = models.ForeignKey(User,
         help_text="User who added this entry.")
-    updated_by = models.CharField(max_length=50,
-        help_text="User who last updated this entry.")
     class Meta:
         ordering = ('lang',)
     def __unicode__(self):
