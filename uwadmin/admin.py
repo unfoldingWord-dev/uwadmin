@@ -1,5 +1,6 @@
 from django.contrib import admin
 from uwadmin.lang import *
+from uwadmin.utils import *
 from uwadmin.models import *
 
 
@@ -19,6 +20,11 @@ class ContactAdmin(admin.ModelAdmin):
     list_editable = ('email', 'phone', 'other', 'checking_entity')
     list_filter = ('checking_entity',)
     search_fields = ('name', 'email', 'phone', 'other')
+    actions = ['D43Sync']
+    def D43Sync(self, request, queryset):
+        created = door43Sync()
+        self.message_user(request, 'Created: {0}'.format(created))
+    D43Sync.short_description = "Door43 User Sync"
 
 class RecentCommunicationAdmin(admin.ModelAdmin):
     list_display = ('contact', 'communication', 'created', 'created_by')

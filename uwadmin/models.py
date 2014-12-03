@@ -19,7 +19,7 @@ class LangCode(models.Model):
         return self.langcode
 
 class Contact(models.Model):
-    name = models.CharField(max_length=255, unique=True,
+    name = models.CharField(max_length=255,
         verbose_name="Name of contact")
     email = models.CharField(max_length=255, blank=True,
         verbose_name="Email address")
