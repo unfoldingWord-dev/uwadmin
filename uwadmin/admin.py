@@ -15,9 +15,9 @@ class LangCodeAdmin(admin.ModelAdmin):
     tDSync.short_description = "tD Sync"
 
 class ContactAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'phone', 'other', 'checking_entity')
+    list_display = ('name', 'd43username', 'email', 'phone', 'other',
+                                                            'checking_entity')
     list_display_links = ('name',)
-    list_editable = ('email', 'phone', 'other', 'checking_entity')
     list_filter = ('checking_entity',)
     search_fields = ('name', 'email', 'phone', 'other')
     actions = ['D43Sync']
