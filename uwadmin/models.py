@@ -10,9 +10,9 @@ CHECKING_LEVEL_CHOICES = (
 
 class LangCode(models.Model):
     langcode = models.CharField(max_length=25, unique=True,
-        help_text="Language Code.")
+        verbose_name="Language Code")
     langname = models.CharField(max_length=255,
-        help_text="Name of language.")
+        verbose_name="Language Name")
     class Meta:
         ordering = ('langcode',)
     def __unicode__(self):
@@ -39,13 +39,10 @@ class Contact(models.Model):
         return self.name
 
 class RecentCommunication(models.Model):
-    contact = models.ForeignKey(Contact, related_name="RecentCommunication",
-        help_text="Name of contact.")
+    contact = models.ForeignKey(Contact, related_name="RecentCommunication")
     communication = models.TextField(blank=True, verbose_name="Message")
-    created = models.DateTimeField(auto_now_add=True,
-        help_text="Time when entry was added.")
-    created_by = models.ForeignKey(User,
-        help_text="User who added this entry.")
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User)
     class Meta:
         ordering = ('contact', 'created')
     def __unicode__(self):
@@ -65,24 +62,18 @@ class OBSTracking(models.Model):
         return self.lang.langcode
 
 class OBSPublishing(models.Model):
-    lang = models.ForeignKey(LangCode, related_name="OBSPublishing",
-        help_text="Language code.")
+    lang = models.ForeignKey(LangCode, related_name="OBSPublishing")
     publish_date = models.DateField()
-    version = models.CharField(max_length=10, help_text="Version of text.")
-    source_text = models.ForeignKey(LangCode,
-        help_text="Source text language code.")
-    source_version = models.CharField(max_length=10, 
-        help_text="Source text version.")
+    version = models.CharField(max_length=10)
+    source_text = models.ForeignKey(LangCode)
+    source_version = models.CharField(max_length=10)
     checking_entity = models.ManyToManyField(Contact,
-        related_name="OBSPublishing",
-        help_text="Checking entities for this translation.")
-    contributors = models.ManyToManyField(Contact,
-        help_text="List of door43 usernames.")
+                                                 related_name="OBSPublishing")
+    contributors = models.ManyToManyField(Contact)
     checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES)
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User,
-        help_text="User who added this entry.")
+    created_by = models.ForeignKey(User)
     class Meta:
         ordering = ('lang',)
     def __unicode__(self):
