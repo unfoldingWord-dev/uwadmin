@@ -2,7 +2,7 @@ import json
 import urllib2
 from uwadmin.models import LangCode
 
-lang_url = 'https://api.unfoldingword.org/obs/txt/1/langnames.json'
+lang_url = 'http://td.unfoldingword.org/exports/langnames.json'
 
 
 def getLangs(url):
