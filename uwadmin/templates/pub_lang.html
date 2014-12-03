@@ -34,6 +34,7 @@
                             <th>Checking</th>
                             <th>Contributors</th>
                             <th>Comments</th>
+                            <th>Published By</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -54,6 +55,7 @@
                             <td> {{ entry.checking_entity.all|join:", " }} </td>
                             <td> {{ entry.contributors.all|join:", " }} </td>
                             <td> <p> {{ entry.comments }} </p> </td>
+                            <td>{{ entry.created_by }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
