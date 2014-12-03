@@ -20,24 +20,19 @@ class LangCode(models.Model):
 
 class Contact(models.Model):
     name = models.CharField(max_length=255, unique=True,
-        help_text="Name of language.")
+        verbose_name="Name of contact")
     email = models.CharField(max_length=255, blank=True,
-        help_text="Email address.")
+        verbose_name="Email address")
     d43username = models.CharField(max_length=255, blank=True,
-        help_text="Door43 username.")
-    location = models.CharField(max_length=255, blank=True,
-        help_text="Location.")
+        verbose_name="Door43 username")
+    location = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=255, blank=True,
-        help_text="Phone number.")
-    languages = models.ManyToManyField(LangCode,
-        related_name="Contact",
-        help_text="Langauges spoken by contact.")
-    relationship = models.TextField(blank=True,
-        help_text="Relationships to other people or organizations.")
+        verbose_name="Phone number")
+    languages = models.ManyToManyField(LangCode, related_name="Contact")
+    relationship = models.CharField(max_length=255, blank=True)
     other = models.CharField(max_length=255, blank=True,
-        help_text="Other information.")
-    checking_entity = models.BooleanField(default=False,
-        help_text="Is this a checking entity?")
+        verbose_name="Other information")
+    checking_entity = models.BooleanField(default=False)
     class Meta:
         ordering = ('name',)
     def __unicode__(self):
@@ -46,8 +41,8 @@ class Contact(models.Model):
 class RecentCommunication(models.Model):
     contact = models.ForeignKey(Contact, related_name="RecentCommunication",
         help_text="Name of contact.")
-    communication = models.TextField(blank=True, help_text="Communication.")
-    created = models.DateField(auto_now_add=True,
+    communication = models.TextField(blank=True, verbose_name="Message")
+    created = models.DateTimeField(auto_now_add=True,
         help_text="Time when entry was added.")
     created_by = models.ForeignKey(User,
         help_text="User who added this entry.")
@@ -58,17 +53,12 @@ class RecentCommunication(models.Model):
 
 class OBSTracking(models.Model):
     lang = models.ForeignKey(LangCode, related_name="OBSTracking",
-        help_text="Language code.")
-    contact = models.ForeignKey(Contact, related_name="OBSTracking",
-        help_text="Contact for this project.")
-    date_started = models.DateField(help_text="Date translation was started.")
-    notes = models.TextField(blank=True, help_text="Notes.")
-    created = models.DateField(auto_now_add=True,
-        help_text="Time when entry was added.")
-    last_modified = models.DateTimeField(auto_now=True,
-        help_text="Time when entry was last modified.")
-    created_by = models.ForeignKey(User,
-        help_text="User who added this entry.")
+        verbose_name="Language.")
+    contact = models.ForeignKey(Contact, related_name="OBSTracking")
+    date_started = models.DateField()
+    notes = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User)
     class Meta:
         ordering = ('lang', 'contact')
     def __unicode__(self):
@@ -77,7 +67,7 @@ class OBSTracking(models.Model):
 class OBSPublishing(models.Model):
     lang = models.ForeignKey(LangCode, related_name="OBSPublishing",
         help_text="Language code.")
-    publish_date = models.DateField(help_text="Date translation was started.")
+    publish_date = models.DateField()
     version = models.CharField(max_length=10, help_text="Version of text.")
     source_text = models.ForeignKey(LangCode,
         help_text="Source text language code.")
@@ -90,10 +80,7 @@ class OBSPublishing(models.Model):
         help_text="List of door43 usernames.")
     checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES)
     comments = models.TextField(blank=True)
-    created = models.DateField(auto_now_add=True,
-        help_text="Time when entry was added.")
-    last_modified = models.DateTimeField(auto_now=True,
-        help_text="Time when entry was last modified.")
+    created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User,
         help_text="User who added this entry.")
     class Meta:

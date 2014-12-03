@@ -28,7 +28,7 @@ class RecentCommunicationAdmin(admin.ModelAdmin):
 
 class OBSTrackingAdmin(admin.ModelAdmin):
     list_display = ('lang', 'contact', 'date_started', 'notes', 'created', 
-        'created_by', 'last_modified', 'updated_by')
+        'created_by')
     list_display_links = ('lang',)
     list_editable = ('contact', 'notes')
     list_filter = ('contact', 'date_started')
@@ -36,15 +36,14 @@ class OBSTrackingAdmin(admin.ModelAdmin):
 
 class OBSPublishingAdmin(admin.ModelAdmin):
     list_display = ('lang', 'publish_date', 'version',
-        'checking_level', 'contributors', 'source_text', 'source_version',
-        'comments', 'created_by', 'last_modified', 'updated_by')
+        'checking_level', 'source_text', 'source_version',
+        'comments', 'created_by')
     list_display_links = ('lang',)
-    list_editable = ('publish_date', 'version', 'checking_level')
     list_filter = ('checking_level', 'publish_date', 'version', 'source_text',
         'source_version')
     search_fields = ('lang', 'publish_date', 'version', 'checking_entity',
         'checking_level', 'contributors', 'source_text', 'source_version',
-        'comments', 'created_by', 'last_modified', 'updated_by')
+        'comments', 'created_by')
 
 admin.site.register(LangCode, LangCodeAdmin)
 admin.site.register(Contact, ContactAdmin)

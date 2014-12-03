@@ -1,0 +1,62 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}uW Admin{% endblock %}
+
+{% block body_base %}
+    <ul class="breadcrumb">
+        <li><a href="/">Home</a></li>
+        <li><a href="/track/">Track</a></li>
+        <li>{{ lang }}</li>
+    </ul>
+
+    <h1>{% trans "Tracking" %} {{ lang }}</h1>
+    <section>
+        <div class="container">
+            <div class="col-xs-8">
+                <h2>Recent Entries</h2>
+                {% if success %}
+                  <div class="alert alert-success">
+                      <a href="#" class="close" data-dismiss="alert">&times;</a>
+                      <p>{{ success }}</p>
+                  </div>
+                {% endif %}
+                {% if object_list %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Contact</th>
+                            <th>Notes</th>
+                            <th>Date Started</th>
+                            <th>Added By</th>
+                            <th>Datestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in object_list  %}
+                        <tr>
+                            <td> {{ entry.contact.name }} </td>
+                            <td> <p> {{ entry.notes }} </p> </td>
+                            <td> {{ entry.date_started }} </td>
+                            <td> {{ entry.created_by.username }} </td>
+                            <td> {{ entry.created }} </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>None, add one!</p>
+                {% endif %}
+            </div>
+            <div class="col-xs-4">
+                <h2>New Entry</h2>
+                <form action="" method="post" class="form-inline">{% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-comment"></i> Add</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

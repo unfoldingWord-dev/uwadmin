@@ -1,0 +1,33 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}uW Admin{% endblock %}
+
+{% block body_base %}
+    <ul class="breadcrumb">
+        <li><a href="/">Home</a></li>
+        <li><a href="/contacts/">Contacts</a></li>
+        <li><a href="/contacts/{{ object.id }}/">{{ object.name }}</a></li>
+    </ul>
+
+     <h1>Edit {{ object.name }}</h1>
+    <section>
+        {% if user.is_authenticated %}
+        <div class="container">
+        <div class="row-fluid">
+            <form action="" method="post">{% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary"><i class="fa fa-comment"></i> Update</button>
+            </form>
+        </div>
+        {% else %}
+            {% url "account_login" as login_url %}
+            <p>{% blocktrans %}
+                Login to get started.
+                <a href="{{ login_url }}" class="btn btn-default">Log In</a>
+            </p>{% endblocktrans %}
+        {% endif %}
+        </div>
+    </section>
+{% endblock %}

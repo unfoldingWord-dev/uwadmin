@@ -3,7 +3,7 @@ from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from django.contrib import admin
-from uwadmin.views import *
+from .views import *
 
 
 urlpatterns = patterns(
@@ -12,8 +12,14 @@ urlpatterns = patterns(
     url(r"^admin/", include(admin.site.urls)),
     url(r"^account/", include("account.urls")),
     url(r"^contacts/$", ContactList.as_view(), name='contactlist'),
-    url(r"^contacts/(?P<pk>\d+)/$", ContactDetail.as_view(),
+    url(r"^contacts/(\d+)/$", ContactDetail.as_view(),
                                                         name='contactdetail'),
+    url(r"^contacts/(?P<pk>\d+)/update/$", ContactUpdate.as_view(),
+                                                        name='contactupdate'),
+    url(r"^publish/$", PubAll.as_view(), name='puball'),
+    url(r"^publish/([\w-]+)/$", PubLang.as_view(), name='publang'),
+    url(r"^track/$", TrackAll.as_view(), name='trackall'),
+    url(r"^track/([\w-]+)/$", TrackLang.as_view(), name='tracklang'),
 )
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

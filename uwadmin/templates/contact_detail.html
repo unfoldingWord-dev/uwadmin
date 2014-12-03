@@ -6,26 +6,81 @@
 
 {% block body_base %}
     <ul class="breadcrumb">
-        <li><a href="/">Home</a> <span class="divider">/</span></li>
+        <li><a href="/">Home</a></li>
+        <li><a href="/contacts/">Contacts</a></li>
+        <li>{{ object.name }}</li>
     </ul>
 
-    <h1>{% trans "Contacts" %}</h1>
+     <h1>{{ object.name }}</h1>
     <section>
+        {% if user.is_authenticated %}
         <div class="container">
-            <h2>{{ object.name }}</h2>
-            <p>Email: {{ object.email }}</p>
-            <p>Door43: {{ object.d43username  }}</p>
-            <p>Location: {{ object.location  }}</p>
-            <p>Phone: {{ object.phone  }}</p>
-            <p>Languages: {{  object.languages.all|join:", " }}</p>
-            <p>Relationship: {{ object.relationship  }}</p>
-            <p>Other: {{ object.other  }}</p>
-            <p>Checking Entity: {% if object.checking_entity %}
-                                <i class="icon-check"></i>
-                                {% else %}
-                                <i class="icon-remove"></i>
-                                {% endif %}
-            </p>
+        <div class="row-fluid">
+            <div class="col-xs-4">
+                <h3><a href="mailto:{{ object.email }}">
+                    <i class="fa fa-send"></i>
+                    {{ object.email }}</a>
+                </h3>
+                <p><b>{{ object.d43username }}</b> @ door43.org</p>
+                <p>Location: {{ object.location  }}</p>
+                <p>Phone: {{ object.phone  }}</p>
+                <p>Languages: {{  object.languages.all|join:", " }}</p>
+                <p>Relationship: {{ object.relationship  }}</p>
+                <p>Other: {{ object.other  }}</p>
+                <p>Checking Entity: {% if object.checking_entity %}
+                                    <i class="fa fa-check"></i>
+                                    {% else %}
+                                    <i class="fa fa-remove"></i>
+                                    {% endif %}</p>
+                    <a href="/contacts/{{ object.id}}/update/">
+                        <button class="btn btn-primary">
+                            <i class="fa fa-edit"></i>
+                            Edit
+                        </button>
+                    </a>
+            </div>
+            <div class="col-xs-8">
+                <h2>Recent Messages</h1>
+                {% if recent_coms %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Message</th>
+                            <th>Added By</th>
+                            <th>Datestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for com in recent_coms  %}
+                        <tr>
+                            <td> <p> {{ com.communication }} </p> </td>
+                            <td> {{ com.created_by.username }} </td>
+                            <td> {{ com.created }} </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>None, add one!</p>
+                {% endif %}
+                <div>
+                    <form action="" method="post" class="form-inline">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-comment"></i> Add
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% else %}
+            {% url "account_login" as login_url %}
+            <p>{% blocktrans %}
+                Login to get started.
+                <a href="{{ login_url }}" class="btn btn-default">Log In</a>
+            </p>{% endblocktrans %}
+        {% endif %}
         </div>
     </section>
 {% endblock %}
