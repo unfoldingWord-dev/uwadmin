@@ -44,7 +44,25 @@
 
 {% block script_base %}
     <script src="{% block jquery_src %}{% static "jquery/js/jquery-2.1.1.min.js" %}{% endblock %}"></script>
+    <script src="https://code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
     <script src="{% static "js/bootstrap.min.js" %}"></script>
     <script src="{% static "pinax/js/theme.js" %}"></script>
+    <script type="text/javascript">
+        $(function() {
+            $("#contacts").autocomplete({
+              source: "/api/contacts/",
+              minLength: 2,
+              select: function( event, ui ) { 
+                  window.location.href = ui.item.value;
+              }
+            });
+        });
+        $(function() {
+            $( "#id_date_started" ).datepicker();
+        });
+        $(function() {
+            $( "#id_publish_date" ).datepicker();
+        });
+    </script>
     {% block extra_script %}{% endblock %}
 {% endblock %}

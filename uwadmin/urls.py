@@ -11,6 +11,7 @@ urlpatterns = patterns(
     url(r"^$", TemplateView.as_view(template_name="homepage.html"), name="home"),
     url(r"^admin/", include(admin.site.urls)),
     url(r"^account/", include("account.urls")),
+    url(r"^api/contacts/", getContact.as_view(), name='getcontact'),
     url(r"^contacts/$", ContactList.as_view(), name='contactlist'),
     url(r"^contacts/create/$", ContactCreate.as_view(), name='contactcreate'),
     url(r"^contacts/(\d+)/$", ContactDetail.as_view(),

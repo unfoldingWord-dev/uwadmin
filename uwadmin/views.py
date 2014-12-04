@@ -1,5 +1,7 @@
+import json
 from django.utils import timezone
 from django.shortcuts import render
+from django.http import HttpResponse
 from django.views.generic.list import *
 from django.views.generic.edit import *
 from django.views.generic.detail import *
@@ -10,6 +12,32 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import CreateView, UpdateView
 from .models import *
 from .forms import *
+
+
+class getContact(View):
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(getContact, self).dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        siteurl = 'http://96.126.122.51:9000{0}'
+        if request.is_ajax():
+            q = request.GET.get('term', '')
+            objects = Contact.objects.filter(name__icontains=q)[:10]
+            results = []
+            for obj in objects:
+                obj_json = {}
+                obj_json['id'] = obj.id
+                obj_json['label'] = obj.name
+                #obj_json['value'] = 'http://' #{0}'.format(obj.id)
+                obj_json['value'] = siteurl.format(reverse('contactdetail', args=[obj.id]))
+                results.append(obj_json)
+            data = json.dumps(results)
+        else:
+            data = 'fail'
+        mimetype = 'application/json'
+        return HttpResponse(data, mimetype)
 
 
 class ContactList(ListView):

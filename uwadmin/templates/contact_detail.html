@@ -65,11 +65,13 @@
                 {% endif %}
                 <div>
                     <form action="" method="post" class="form-inline">
+                    <div class="input-group">
                         {% csrf_token %}
                         {{ form.as_p }}
                         <button type="submit" class="btn btn-primary">
                             <i class="fa fa-comment"></i> Add
                         </button>
+                    </div>
                     </form>
                 </div>
             </div>

@@ -16,9 +16,12 @@
         {% if user.is_authenticated %}
         <div class="container">
         <div class="row-fluid">
+            <div class="input-group">
+            <div class="input-group">
             <form action="" method="post">{% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-primary"><i class="fa fa-comment"></i> Update</button>
+            </div>
             </form>
         </div>
         {% else %}
