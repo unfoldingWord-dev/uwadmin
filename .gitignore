@@ -1,3 +1,4 @@
 dev.db
 *.pyc
 uwadmin/local_settings.py
+uwadmin/site_media/
