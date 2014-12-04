@@ -29,6 +29,7 @@ class LangTrackNewForm(ModelForm):
         fields = ['lang', 'contact', 'date_started', 'notes']
         widgets = {
             'date_started': DateInput(attrs={'class':'datepicker'}),
+            'notes': Textarea(attrs={'cols': 20, 'rows': 2}),
         }
 
     def __init__(self,  user, *args, **kwargs):
@@ -46,6 +47,7 @@ class LangTrackForm(ModelForm):
         fields = ['contact', 'date_started', 'notes']
         widgets = {
             'date_started': DateInput(attrs={'class':'datepicker'}),
+            'notes': Textarea(attrs={'cols': 20, 'rows': 2}),
         }
 
     def __init__(self, lang, user, *args, **kwargs):
@@ -66,7 +68,7 @@ class LangPubForm(ModelForm):
                              'checking_entity', 'checking_level', 'comments' ]
         widgets = {
             'publish_date': DateInput(attrs={'class':'datepicker'}),
-            'comments': Textarea(attrs={'rows': 2}),
+            'comments': Textarea(attrs={'cols': 20, 'rows': 2}),
         }
 
     def __init__(self, lang, user, *args, **kwargs):
@@ -92,7 +94,7 @@ class LangPubNewForm(ModelForm):
                                                                   'comments' ]
         widgets = {
             'publish_date': DateInput(attrs={'class':'datepicker'}),
-            'comments': Textarea(attrs={'rows': 2}),
+            'comments': Textarea(attrs={'cols': 20, 'rows': 2}),
         }
 
     def __init__(self, user, *args, **kwargs):

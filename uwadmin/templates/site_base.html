@@ -27,6 +27,20 @@
     {% block extra_body %}{% endblock %}
 {% endblock %}
 
+{% block nav %}
+    <ul class="nav navbar-nav">
+        <li>
+            <a href="/contacts/"><i class="fa fa-group"></i> Contacts</a>
+        </li>
+        <li>
+            <a href="/track/"><i class="fa fa-cogs"></i> Track</a>
+        </li>
+        <li>
+            <a href="/publish/"><i class="fa fa-globe"></i> Publish</a>
+        </li>
+    </ul>
+{% endblock %}
+
 
 {% block script_base %}
     <script src="{% block jquery_src %}{% static "jquery/js/jquery-2.1.1.min.js" %}{% endblock %}"></script>
