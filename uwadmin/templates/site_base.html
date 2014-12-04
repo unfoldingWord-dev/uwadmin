@@ -29,6 +29,7 @@
 {% endblock %}
 
 {% block nav %}
+    {% if user.is_authenticated %}
     <ul class="nav navbar-nav">
         <li>
             <a href="/contacts/"><i class="fa fa-group"></i> Contacts</a>
@@ -40,6 +41,7 @@
             <a href="/publish/"><i class="fa fa-globe"></i> Publish</a>
         </li>
     </ul>
+    {% endif %}
 {% endblock %}
 
 
