@@ -13,7 +13,7 @@
     <h1>{% trans "Track OBS" %}</h1>
     <section>
         <div class="container">
-            <div class="col-xs-6">
+            <div class="col-md-6">
             {{ lang }}
             <h2>Existing</h2>
             {% for k,v in object_list.items %}
@@ -23,7 +23,7 @@
             {% endfor %}
             </ul>
             </div>
-            <div class="col-xs-6">
+            <div class="col-md-6">
             <h2>New</h2>
             <p>Enter language code to start a new tracking</p>
                 <form action="" method="post" class="form-inline">{% csrf_token %}
