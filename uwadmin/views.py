@@ -69,7 +69,21 @@ class ContactUpdate(UpdateView):
         return super(ContactUpdate, self).dispatch(*args, **kwargs)
 
     def get_success_url(self):
-        return reverse('contactdetail', kwargs={'pk': self.object.pk})
+        return reverse('contactdetail', args=[self.object.pk])
+
+
+class ContactCreate(CreateView):
+    model = Contact
+    fields = ['name', 'email', 'd43username', 'location', 'phone', 'languages', 
+                                  'relationship', 'other', 'checking_entity', ]
+    template_name = 'contact_create.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ContactCreate, self).dispatch(*args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('contactdetail', args=[self.object.pk])
 
 
 class TrackAll(View):

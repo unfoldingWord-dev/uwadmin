@@ -12,6 +12,7 @@ urlpatterns = patterns(
     url(r"^admin/", include(admin.site.urls)),
     url(r"^account/", include("account.urls")),
     url(r"^contacts/$", ContactList.as_view(), name='contactlist'),
+    url(r"^contacts/create/$", ContactCreate.as_view(), name='contactcreate'),
     url(r"^contacts/(\d+)/$", ContactDetail.as_view(),
                                                         name='contactdetail'),
     url(r"^contacts/(?P<pk>\d+)/update/$", ContactUpdate.as_view(),
