@@ -8,7 +8,8 @@ class RecentComForm(ModelForm):
         model = RecentCommunication
         fields = [ 'communication', ]
         widgets = {
-            'communication': Textarea(attrs={'cols': 80, 'rows': 2}),
+            'communication': Textarea(attrs={'class': 'form-control',
+                                                      'cols': 40, 'rows': 2}),
         }
 
     def __init__(self,  user, contact, *args, **kwargs):
@@ -28,8 +29,12 @@ class LangTrackNewForm(ModelForm):
         model = OBSTracking
         fields = ['lang', 'contact', 'date_started', 'notes']
         widgets = {
-            'date_started': DateInput(attrs={'class':'datepicker'}),
-            'notes': Textarea(attrs={'cols': 20, 'rows': 2}),
+            'contact': Select(attrs={'class': 'form-control'}),
+            'date_started': DateInput(attrs={'class':
+                                                  'form-control datepicker'}),
+            'lang': Select(attrs={'class': 'form-control'}),
+            'notes': Textarea(attrs={'class':'form-control', 'cols': 20,
+                                                                  'rows': 2}),
         }
 
     def __init__(self,  user, *args, **kwargs):
@@ -46,8 +51,12 @@ class LangTrackForm(ModelForm):
         model = OBSTracking
         fields = ['contact', 'date_started', 'notes']
         widgets = {
-            'date_started': DateInput(attrs={'class':'datepicker'}),
-            'notes': Textarea(attrs={'cols': 20, 'rows': 2}),
+            'contact': Select(attrs={'class': 'form-control'}),
+            'date_started': DateInput(attrs={'class':
+                                                  'form-control datepicker'}),
+            'lang': Select(attrs={'class': 'form-control'}),
+            'notes': Textarea(attrs={'class':'form-control', 'cols': 20,
+                                                                  'rows': 2}),
         }
 
     def __init__(self, lang, user, *args, **kwargs):
@@ -67,8 +76,17 @@ class LangPubForm(ModelForm):
         fields = [ 'publish_date', 'version', 'source_text', 'source_version',
                              'checking_entity', 'checking_level', 'comments' ]
         widgets = {
-            'publish_date': DateInput(attrs={'class':'datepicker'}),
-            'comments': Textarea(attrs={'cols': 20, 'rows': 2}),
+            'publish_date': DateInput(attrs={'class':
+                                     'form-control datepicker', 'size': '8'}),
+            'comments': Textarea(attrs={'class':'form-control', 'cols': 20,
+                                                                  'rows': 2}),
+            'version': TextInput(attrs={'class':'form-control', 'size': '5'}),
+            'source_version': TextInput(attrs={'class':'form-control', 'size': '5'}),
+            'checking_entity': CheckboxSelectMultiple(attrs={'class':
+                                                             'form-control'}),
+            'checking_level': Select(attrs={'class': 'form-control'}),
+            'source_text': Select(attrs={'class': 'form-control'}),
+            'lang': Select(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, lang, user, *args, **kwargs):
@@ -93,8 +111,17 @@ class LangPubNewForm(ModelForm):
                    'source_version', 'checking_entity', 'checking_level',
                                                                   'comments' ]
         widgets = {
-            'publish_date': DateInput(attrs={'class':'datepicker'}),
-            'comments': Textarea(attrs={'cols': 20, 'rows': 2}),
+            'publish_date': DateInput(attrs={'class':
+                                     'form-control datepicker', 'size': '8'}),
+            'comments': Textarea(attrs={'class':'form-control', 'cols': 20,
+                                                                  'rows': 2}),
+            'version': TextInput(attrs={'class':'form-control', 'size': '5'}),
+            'source_version': TextInput(attrs={'class':'form-control', 'size': '5'}),
+            'checking_entity': CheckboxSelectMultiple(attrs={'class':
+                                                             'form-control'}),
+            'checking_level': Select(attrs={'class': 'form-control'}),
+            'source_text': Select(attrs={'class': 'form-control'}),
+            'lang': Select(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, user, *args, **kwargs):
