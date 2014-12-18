@@ -14,11 +14,27 @@ class LangCodeAdmin(admin.ModelAdmin):
         self.message_user(request, 'Created: {0}'.format(created))
     tDSync.short_description = "tD Sync"
 
-class ContactAdmin(admin.ModelAdmin):
-    list_display = ('name', 'd43username', 'email', 'phone', 'other',
-                                                            'checking_entity')
+class OrganizationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'website', 'phone', 'location',
+                                                   'other', 'checking_entity')
     list_display_links = ('name',)
     list_filter = ('checking_entity',)
+    search_fields = ('name', 'email', 'phone', 'other')
+
+class ConnectionAdmin(admin.ModelAdmin):
+    list_display = ('con_src', 'con_type', 'con_dst')
+    list_display_links = ('con_src',)
+    list_filter = ('con_type',)
+    search_fields = ('con_src', 'con_dst')
+
+class ConnectionTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', )
+    list_display_links = ('name',)
+    search_fields = ('name',)
+
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ('name', 'd43username', 'email', 'phone', 'other')
+    list_display_links = ('name',)
     search_fields = ('name', 'email', 'phone', 'other')
     actions = ['D43Sync']
     def D43Sync(self, request, queryset):
@@ -53,6 +69,9 @@ class OBSPublishingAdmin(admin.ModelAdmin):
 
 admin.site.register(LangCode, LangCodeAdmin)
 admin.site.register(Contact, ContactAdmin)
+admin.site.register(Organization, OrganizationAdmin)
+admin.site.register(Connection, ConnectionAdmin)
+admin.site.register(ConnectionType, ConnectionTypeAdmin)
 admin.site.register(RecentCommunication, RecentCommunicationAdmin)
 admin.site.register(OBSTracking, OBSTrackingAdmin)
 admin.site.register(OBSPublishing, OBSPublishingAdmin)

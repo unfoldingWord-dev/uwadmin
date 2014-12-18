@@ -21,7 +21,7 @@ class getContact(View):
         return super(getContact, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        siteurl = 'http://96.126.122.51:9000{0}'
+        siteurl = 'https://admin.unfoldingword.org{0}'
         if request.is_ajax():
             q = request.GET.get('term', '')
             objects = Contact.objects.filter(name__icontains=q)[:10]

@@ -18,6 +18,23 @@ class LangCode(models.Model):
     def __unicode__(self):
         return self.langcode
 
+class Organization(models.Model):
+    name = models.CharField(max_length=255,
+        verbose_name="Name of Organization")
+    email = models.CharField(max_length=255, blank=True,
+        verbose_name="Email address")
+    phone = models.CharField(max_length=255, blank=True,
+        verbose_name="Phone number")
+    website = models.CharField(max_length=255, blank=True)
+    location = models.CharField(max_length=255, blank=True)
+    languages = models.ManyToManyField(LangCode, related_name="Organization")
+    other = models.TextField(blank=True, verbose_name="Other information")
+    checking_entity = models.BooleanField(default=False)
+    class Meta:
+        ordering = ('name',)
+    def __unicode__(self):
+        return self.name
+
 class Contact(models.Model):
     name = models.CharField(max_length=255,
         verbose_name="Name of contact")
@@ -29,14 +46,30 @@ class Contact(models.Model):
     phone = models.CharField(max_length=255, blank=True,
         verbose_name="Phone number")
     languages = models.ManyToManyField(LangCode, related_name="Contact")
-    relationship = models.CharField(max_length=255, blank=True)
-    other = models.CharField(max_length=255, blank=True,
-        verbose_name="Other information")
-    checking_entity = models.BooleanField(default=False)
+    org = models.ForeignKey(Organization, blank=True, null=True,
+                                                  verbose_name="Organization")
+    other = models.TextField(blank=True, verbose_name="Other information")
     class Meta:
         ordering = ('name',)
     def __unicode__(self):
         return self.name
+
+class ConnectionType(models.Model):
+    name = models.CharField(max_length=255,
+        verbose_name="Name of Connection Type")
+    class Meta:
+        ordering = ('name',)
+    def __unicode__(self):
+        return self.name
+
+class Connection(models.Model):
+    con_src = models.ForeignKey(Contact, related_name="Connection")
+    con_dst = models.ForeignKey(Contact)
+    con_type = models.ForeignKey(ConnectionType)
+    class Meta:
+        ordering = ('con_src',)
+    def __unicode__(self):
+        return self.con_src.name
 
 class RecentCommunication(models.Model):
     contact = models.ForeignKey(Contact, related_name="RecentCommunication")
