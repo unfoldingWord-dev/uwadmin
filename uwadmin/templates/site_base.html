@@ -1,8 +1,7 @@
 {% extends "theme_bootstrap/base.html" %}
 
 {% load staticfiles %}
-{% load metron_tags %}
-{% load i18n %}
+{% load metron_tags %} {% load i18n %}
 
 
 {% block style_base %}
@@ -56,7 +55,7 @@
               source: "/api/contacts/",
               minLength: 2,
               select: function( event, ui ) { 
-                  window.location.href = ui.item.value;
+                  window.location.href = ui.item.url;
               }
             });
         });
@@ -65,6 +64,12 @@
         });
         $(function() {
             $( "#id_publish_date" ).datepicker();
+        });
+        $(function() {
+            $("#contacts-id").autocomplete({
+              source: "/api/contacts/",
+              minLength: 2
+            });
         });
     </script>
     {% block extra_script %}{% endblock %}

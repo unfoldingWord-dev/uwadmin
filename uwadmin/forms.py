@@ -24,6 +24,29 @@ class RecentComForm(ModelForm):
         entry.save()
 
 
+class ConnectionForm(ModelForm):
+    class Meta:
+        model = Connection
+        fields = [ 'con_dst', 'con_type']
+        widgets = {
+            'con_dst': TextInput(attrs={'class': 'form-control',
+                    'id': "contacts-id", 'placeholder': "Add connection..."}),
+        }
+
+    def __init__(self,  contact, *args, **kwargs):
+        self.contact = contact
+        super(ConnectionForm, self).__init__(*args, **kwargs)
+
+    def save(self):
+        entry = super(ConnectionForm, self).save(commit=False)
+        entry.con_src = self.contact
+        entry.save()
+        if entry.con_type.mutual:
+            reverse = Connection(con_src=entry.con_dst, con_dst=self.contact,
+                                                      con_type=entry.con_type)
+            reverse.save()
+
+
 class LangTrackNewForm(ModelForm):
     class Meta:
         model = OBSTracking
@@ -93,7 +116,7 @@ class LangPubForm(ModelForm):
         self.created_by = user
         self.lang = lang
         super(LangPubForm, self).__init__(*args, **kwargs)
-        self.fields['checking_entity'].queryset = Contact.objects.filter(
+        self.fields['checking_entity'].queryset = Organization.objects.filter(
                                                          checking_entity=True)
 
     def save(self):
@@ -127,7 +150,7 @@ class LangPubNewForm(ModelForm):
     def __init__(self, user, *args, **kwargs):
         self.created_by = user
         super(LangPubNewForm, self).__init__(*args, **kwargs)
-        self.fields['checking_entity'].queryset = Contact.objects.filter(
+        self.fields['checking_entity'].queryset = Organization.objects.filter(
                                                          checking_entity=True)
 
     def save(self):

@@ -28,7 +28,7 @@ class ConnectionAdmin(admin.ModelAdmin):
     search_fields = ('con_src', 'con_dst')
 
 class ConnectionTypeAdmin(admin.ModelAdmin):
-    list_display = ('name', )
+    list_display = ('name', 'mutual')
     list_display_links = ('name',)
     search_fields = ('name',)
 

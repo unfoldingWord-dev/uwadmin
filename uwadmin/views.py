@@ -30,8 +30,10 @@ class getContact(View):
                 obj_json = {}
                 obj_json['id'] = obj.id
                 obj_json['label'] = obj.name
-                #obj_json['value'] = 'http://' #{0}'.format(obj.id)
-                obj_json['value'] = siteurl.format(reverse('contactdetail', args=[obj.id]))
+                obj_json['value'] = obj.id
+                obj_json['url'] = '/contacts/{0}'.format(obj.id)
+                #obj_json['url'] = siteurl.format(reverse('contactdetail',
+                                                               #args=[obj.id]))
                 results.append(obj_json)
             data = json.dumps(results)
         else:
@@ -67,29 +69,45 @@ class ContactDetail(View):
 
     def get(self, request, *args, **kwargs):
         context = self.setup(request)
-        context['form'] = RecentComForm(self.request.user, self.contact)
+        context['form_com'] = RecentComForm(self.request.user, self.contact)
         context['recent_coms'] = RecentCommunication.objects.filter(
                                contact=self.args[0]).order_by('-created')
+        context['form_con'] = ConnectionForm(self.contact)
+        context['connections'] = Connection.objects.filter(
+                               con_src=self.args[0]).order_by('con_type')
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         context = self.setup(request)
-        form = RecentComForm(self.request.user, self.contact, request.POST)
-        if form.is_valid():
-            form.save()
-            context['success'] = 'Entry added.'
-            context['form'] = RecentComForm(self.request.user, self.args[0])
-        else:
-            context['form'] = form
+        if 'recent_com' in request.POST:
+            form_com = RecentComForm(self.request.user, self.contact,
+                                                                 request.POST)
+            if form_com.is_valid():
+                form_com.save()
+                context['com_success'] = 'Entry added.'
+                context['form_com'] = RecentComForm(self.request.user,
+                                                                 self.args[0])
+            else:
+                context['form_com'] = form_com
+        if 'con' in request.POST:
+            form_con = ConnectionForm(self.contact, request.POST)
+            if form_con.is_valid():
+                form_con.save()
+                context['con_success'] = 'Connection created.'
+
+        context['form_com'] = RecentComForm(self.request.user, self.contact)
         context['recent_coms'] = RecentCommunication.objects.filter(
-                               contact=self.args[0]).order_by('-created')
+                                    contact=self.args[0]).order_by('-created')
+        context['form_con'] = ConnectionForm(self.contact)
+        context['connections'] = Connection.objects.filter(
+                                    con_src=self.args[0]).order_by('con_type')
         return render(request, self.template_name, context)
 
 
 class ContactUpdate(UpdateView):
     model = Contact
     fields = ['name', 'email', 'd43username', 'location', 'phone', 'languages', 
-                                  'relationship', 'other', 'checking_entity', ]
+                                                              'org', 'other', ]
     template_name = 'contact_update.html'
 
     @method_decorator(login_required)
@@ -103,7 +121,7 @@ class ContactUpdate(UpdateView):
 class ContactCreate(CreateView):
     model = Contact
     fields = ['name', 'email', 'd43username', 'location', 'phone', 'languages', 
-                                  'relationship', 'other', 'checking_entity', ]
+                                                              'org', 'other', ]
     template_name = 'contact_create.html'
 
     @method_decorator(login_required)
