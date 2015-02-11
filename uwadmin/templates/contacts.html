@@ -4,28 +4,24 @@
 
 {% block head_title %}uW Admin{% endblock %}
 
-{% block body_base %}
+{% block body %}
     <ul class="breadcrumb">
         <li><a href="/">Home</a></li>
         <li>Contacts</li>
     </ul>
 
     <h1>{% trans "Contacts" %}</h1>
-    <section>
-        <div class="container">
-        <div class="row-fluid">
-            <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                    <input type="text" class="form-control" id="contacts" placeholder="Search...">
-                </div>
-            </div>
-            <div class="col-md-2">
-            </div>
-            <div class="col-md-4">
-                <a href="/contacts/create/"><button class="btn btn-primary"><i class="fa fa-user"></i> Create</button></a>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                <input type="text" class="form-control" id="contacts" placeholder="Search...">
             </div>
         </div>
+        <div class="col-md-2">
         </div>
-    </section>
+        <div class="col-md-4">
+            <a href="/contacts/create/"><button class="btn btn-primary"><i class="fa fa-user"></i> Create</button></a>
+        </div>
+    </div>
 {% endblock %}

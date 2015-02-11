@@ -1,27 +1,26 @@
 {% extends "site_base.html" %}
 
 {% load i18n %}
+{% load bootstrap %}
 
 {% block head_title %}uW Admin{% endblock %}
 
-{% block body_base %}
+{% block body %}
     <ul class="breadcrumb">
         <li><a href="/">Home</a></li>
         <li><a href="/contacts/">Contacts</a></li>
         <li>Create</li>
     </ul>
 
-     <h1>Create Contact</h1>
-    <section>
-        {% if user.is_authenticated %}
-        <div class="container">
-        <div class="row-fluid">
-            <form action="" method="post">{% csrf_token %}
-            <div class="input-group">
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary"><i class="fa fa-user"></i> Create</button>
+    <h1>Create Contact</h1>
+    {% if user.is_authenticated %}
+        <div class="row">
+            <div class="col-md-4">
+                <form action="" method="post">{% csrf_token %}
+                    {{ form|bootstrap }}
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-user"></i> Create</button>
+                </form>
             </div>
-            </form>
         </div>
         {% else %}
             {% url "account_login" as login_url %}

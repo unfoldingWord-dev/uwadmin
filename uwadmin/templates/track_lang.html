@@ -1,10 +1,11 @@
 {% extends "site_base.html" %}
 
 {% load i18n %}
+{% load bootstrap %}
 
 {% block head_title %}uW Admin{% endblock %}
 
-{% block body_base %}
+{% block body %}
     <ul class="breadcrumb">
         <li><a href="/">Home</a></li>
         <li><a href="/track/">Track</a></li>
@@ -12,51 +13,49 @@
     </ul>
 
     <h1>{% trans "Tracking" %} {{ lang }}</h1>
-    <section>
-        <div class="container">
-            <div class="col-md-8">
-                <h2>Recent Entries</h2>
-                {% if success %}
-                  <div class="alert alert-success">
-                      <a href="#" class="close" data-dismiss="alert">&times;</a>
-                      <p>{{ success }}</p>
-                  </div>
-                {% endif %}
-                {% if object_list %}
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Contact</th>
-                            <th>Notes</th>
-                            <th>Date Started</th>
-                            <th>Added By</th>
-                            <th>Datestamp</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for entry in object_list  %}
-                        <tr>
-                            <td> {{ entry.contact.name }} </td>
-                            <td> <p> {{ entry.notes }} </p> </td>
-                            <td> {{ entry.date_started }} </td>
-                            <td> {{ entry.created_by.username }} </td>
-                            <td> {{ entry.created }} </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <p>None, add one!</p>
-                {% endif %}
-            </div>
-            <div class="col-md-4">
-                <h2>New Entry</h2>
-                <form action="" method="post" class="form-inline">{% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-cogs"></i> Track</button>
-                </form>
-            </div>
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Recent Entries</h2>
+            {% if success %}
+              <div class="alert alert-success">
+                  <a href="#" class="close" data-dismiss="alert">&times;</a>
+                  <p>{{ success }}</p>
+              </div>
+            {% endif %}
+            {% if object_list %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Contact</th>
+                        <th>Notes</th>
+                        <th>Date Started</th>
+                        <th>Added By</th>
+                        <th>Datestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in object_list  %}
+                    <tr>
+                        <td> {{ entry.contact.name }} </td>
+                        <td> <p> {{ entry.notes }} </p> </td>
+                        <td> {{ entry.date_started }} </td>
+                        <td> {{ entry.created_by.username }} </td>
+                        <td> {{ entry.created }} </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>None, add one!</p>
+            {% endif %}
         </div>
-    </section>
+        <div class="col-md-4">
+            <h2>New Entry</h2>
+            <form action="" method="post" class="form">{% csrf_token %}
+                {{ form|bootstrap }}
+                <button type="submit" class="btn btn-primary"><i class="fa fa-cogs"></i> Track</button>
+            </form>
+        </div>
+    </div>
 
 {% endblock %}
