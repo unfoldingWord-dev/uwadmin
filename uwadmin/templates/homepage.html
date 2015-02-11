@@ -17,9 +17,14 @@
                 What do you want to do?
                 {% endblocktrans %}
             </p>
-            {% blocktrans %}<a href="/contacts/" class="btn btn-primary large">Contacts</a>{% endblocktrans %}
-            {% blocktrans %}<a href="/track/" class="btn btn-primary large">Track</a>{% endblocktrans %}
-            {% blocktrans %}<a href="/publish/" class="btn btn-primary large">Publish</a>{% endblocktrans %}
+            {% url "contact_list" as contacts_url %}
+            {% url "track_all" as track_url %}
+            {% url "publish_all" as publish_url %}
+            {% blocktrans %}
+                <a href="{{ contacts_url }}" class="btn btn-primary large">Contacts</a>
+                <a href="{{ track_url }}" class="btn btn-primary large">Track</a>
+                <a href="{{ publish_url }}" class="btn btn-primary large">Publish</a>
+            {% endblocktrans %}
             {% else %}
             <p>
                 {% url "account_login" as login_url %}

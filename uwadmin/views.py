@@ -1,6 +1,6 @@
 import json
 from django.utils import timezone
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.generic.list import *
 from django.views.generic.edit import *
@@ -15,14 +15,13 @@ from .models import *
 from .forms import *
 
 
-class getContact(View):
+class ApiContact(View):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(getContact, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        siteurl = "https://{}".format(Site.objects.get_current().domain)
         if request.is_ajax():
             q = request.GET.get('term', '')
             objects = Contact.objects.filter(name__icontains=q)[:10]
@@ -32,9 +31,7 @@ class getContact(View):
                 obj_json['id'] = obj.id
                 obj_json['label'] = obj.name
                 obj_json['value'] = obj.id
-                obj_json['url'] = '/contacts/{0}'.format(obj.id)
-                #obj_json['url'] = siteurl.format(reverse('contactdetail',
-                                                               #args=[obj.id]))
+                obj_json['url'] = reverse("contact_detail", args=[obj.pk])
                 results.append(obj_json)
             data = json.dumps(results)
         else:
@@ -130,7 +127,7 @@ class ContactCreate(CreateView):
         return super(ContactCreate, self).dispatch(*args, **kwargs)
 
     def get_success_url(self):
-        return reverse('contactdetail', args=[self.object.pk])
+        return reverse('contact_detail', args=[self.object.pk])
 
 
 class TrackAll(View):
@@ -157,8 +154,7 @@ class TrackAll(View):
         form = LangTrackNewForm(self.request.user, request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/track/{0}/'.format(
-                                                   form.cleaned_data['lang']))
+            return redirect("track_language", form.cleaned_data["lang"])
         else:
             context['form'] = form
             return render(request, self.template_name, context)
@@ -222,8 +218,7 @@ class PubAll(View):
         form = LangPubNewForm(self.request.user, request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/publish/{0}/'.format(
-                                                   form.cleaned_data['lang']))
+            return redirect("publish_language", form.cleaned_data["lang"])
         else:
             context['form'] = form
             return render(request, self.template_name, context)
@@ -247,6 +242,9 @@ class PubLang(View):
     def get(self, request, *args, **kwargs):
         context = self.setup(request)
         context['form'] = LangPubForm(self.lang, self.request.user)
+        context.udpate({
+            "site": Site.objects.get_current()
+        })
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):

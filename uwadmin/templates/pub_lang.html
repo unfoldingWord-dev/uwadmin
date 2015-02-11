@@ -7,8 +7,8 @@
 
 {% block body %}
     <ul class="breadcrumb">
-        <li><a href="/">Home</a></li>
-        <li><a href="/publish/">Publish</a></li>
+        <li><a href="{% url "home" %}">Home</a></li>
+        <li><a href="{% url "publish_all" %}">Publish</a></li>
         <li>{{ lang }}</li>
     </ul>
 
@@ -41,19 +41,13 @@
                     <tr>
                         <td> {{ entry.publish_date }} </td>
                         <td> {{ entry.version }} </td>
-                        <td> 
-                        {% if entry.checking_level == 1 %}
-                            <img src="https://api.unfoldingword.org/obs/jpg/1/checkinglevels/uW-Level1-32px.png"></img>
-                        {% elif entry.checking_level == 2 %}
-                            <img src="https://api.unfoldingword.org/obs/jpg/1/checkinglevels/uW-Level2-32px.png"></img>
-                        {% elif entry.checking_level == 3 %}
-                            <img src="https://api.unfoldingword.org/obs/jpg/1/checkinglevels/uW-Level3-32px.png"></img>
-                        {% endif %}
+                        <td>
+                            <img src="https://{{ site.domain }}/obs/jpg/1/checkinglevels/uW-Level{{ entry.checking_level }}-32px.png" />
                         </td>
-                        <td> {{ entry.source_text }} @ {{ entry.source_version }}</td>
-                        <td> {{ entry.checking_entity.all|join:", " }} </td>
-                        <td> {{ entry.contributors.all|join:", " }} </td>
-                        <td> <p> {{ entry.comments }} </p> </td>
+                        <td>{{ entry.source_text }} @ {{ entry.source_version }}</td>
+                        <td>{{ entry.checking_entity.all|join:", " }} </td>
+                        <td>{{ entry.contributors.all|join:", " }} </td>
+                        <td>{{ entry.comments|linebreaks }}</td>
                         <td>{{ entry.created_by }}</td>
                     </tr>
                     {% endfor %}

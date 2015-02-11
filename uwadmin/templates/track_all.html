@@ -7,7 +7,7 @@
 
 {% block body %}
     <ul class="breadcrumb">
-        <li><a href="/">Home</a></li>
+        <li><a href="{% url "home" %}">Home</a></li>
         <li>Track</li>
     </ul>
 
@@ -18,7 +18,7 @@
         {{ lang }}
         <h2>Existing</h2>
         {% for k,v in object_list.items %}
-            <li><a href="/track/{{ k }}">
+            <li><a href="{% url "track_language" k %}">
                 {{ v }} ({{ k }})
             </a></li>
         {% endfor %}

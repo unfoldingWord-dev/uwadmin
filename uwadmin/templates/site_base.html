@@ -31,13 +31,13 @@
     {% if user.is_authenticated %}
     <ul class="nav navbar-nav">
         <li>
-            <a href="/contacts/"><i class="fa fa-group"></i> Contacts</a>
+            <a href="{% url "contact_list" %}"><i class="fa fa-group"></i> Contacts</a>
         </li>
         <li>
-            <a href="/track/"><i class="fa fa-cogs"></i> Track</a>
+            <a href="{% url "track_all" %}"><i class="fa fa-cogs"></i> Track</a>
         </li>
         <li>
-            <a href="/publish/"><i class="fa fa-globe"></i> Publish</a>
+            <a href="{% url "publish_all" %}"><i class="fa fa-globe"></i> Publish</a>
         </li>
     </ul>
     {% endif %}
@@ -50,7 +50,7 @@
     <script type="text/javascript">
         $(function() {
             $("#contacts").autocomplete({
-              source: "/api/contacts/",
+              source: "{% url "api_contacts" %}",
               minLength: 2,
               select: function( event, ui ) {
                   window.location.href = ui.item.url;
@@ -65,7 +65,7 @@
         });
         $(function() {
             $("#contacts-id").autocomplete({
-              source: "/api/contacts/",
+              source: "{% url "api_contacts" %}",
               minLength: 2
             });
         });

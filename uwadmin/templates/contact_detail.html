@@ -7,8 +7,8 @@
 
 {% block body %}
     <ul class="breadcrumb">
-        <li><a href="/">Home</a></li>
-        <li><a href="/contacts/">Contacts</a></li>
+        <li><a href="{% url "home" %}">Home</a></li>
+        <li><a href="{% url "contact_list" %}">Contacts</a></li>
         <li>{{ object.name }}</li>
     </ul>
 
