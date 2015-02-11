@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.contrib.sites.models import Site
 from django.views.generic.edit import CreateView, UpdateView
 from .models import *
 from .forms import *
@@ -21,7 +22,7 @@ class getContact(View):
         return super(getContact, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        siteurl = 'https://admin.unfoldingword.org{0}'
+        siteurl = "https://{}".format(Site.objects.get_current().domain)
         if request.is_ajax():
             q = request.GET.get('term', '')
             objects = Contact.objects.filter(name__icontains=q)[:10]
