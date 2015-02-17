@@ -1,20 +1,24 @@
-from django.forms import *
-from .models import *
-from .utils import *
+from django import forms
+
+from .models import RecentCommunication, Connection, OBSTracking, OBSPublishing, Organization
+from .utils import get_contrib
 
 
-class RecentComForm(ModelForm):
+class RecentComForm(forms.ModelForm):
     class Meta:
         model = RecentCommunication
-        fields = [ 'communication', ]
+        fields = ["communication"]
         widgets = {
-            'communication': Textarea(attrs={'class': 'form-control',
-                                                      'cols': 40, 'rows': 2}),
+            "communication": forms.Textarea(attrs={
+                "class": "form-control",
+                "cols": 40,
+                "rows": 2
+            }),
         }
 
-    def __init__(self,  user, contact, *args, **kwargs):
-        self.created_by = user
-        self.contact = contact
+    def __init__(self, *args, **kwargs):
+        self.created_by = kwargs.pop("user")
+        self.contact = kwargs.pop("contact")
         super(RecentComForm, self).__init__(*args, **kwargs)
 
     def save(self):
@@ -24,17 +28,20 @@ class RecentComForm(ModelForm):
         entry.save()
 
 
-class ConnectionForm(ModelForm):
+class ConnectionForm(forms.ModelForm):
     class Meta:
         model = Connection
-        fields = [ 'con_dst', 'con_type']
+        fields = ["con_dst", "con_type"]
         widgets = {
-            'con_dst': TextInput(attrs={'class': 'form-control',
-                    'id': "contacts-id", 'placeholder': "Add connection..."}),
+            "con_dst": forms.TextInput(attrs={
+                "class": "form-control",
+                "id": "contacts-id",
+                "placeholder": "Add connection..."
+            }),
         }
 
-    def __init__(self,  contact, *args, **kwargs):
-        self.contact = contact
+    def __init__(self, *args, **kwargs):
+        self.contact = kwargs.pop("contact")
         super(ConnectionForm, self).__init__(*args, **kwargs)
 
     def save(self):
@@ -42,25 +49,25 @@ class ConnectionForm(ModelForm):
         entry.con_src = self.contact
         entry.save()
         if entry.con_type.mutual:
-            reverse = Connection(con_src=entry.con_dst, con_dst=self.contact,
-                                                      con_type=entry.con_type)
-            reverse.save()
+            Connection.objects.create(
+                con_src=entry.con_dst,
+                con_dst=self.contact,
+                con_type=entry.con_type
+            )
 
 
-class LangTrackNewForm(ModelForm):
+class LangTrackNewForm(forms.ModelForm):
     class Meta:
         model = OBSTracking
-        fields = ['lang', 'contact', 'date_started', 'notes']
+        fields = ["lang", "contact", "date_started", "notes"]
         widgets = {
-            'contact': Select(attrs={'class': 'form-control'}),
-            'date_started': DateInput(attrs={'class':
-                                                  'form-control datepicker'}),
-            'lang': Select(attrs={'class': 'form-control'}),
-            'notes': Textarea(attrs={'class':'form-control', 'cols': 20,
-                                                                  'rows': 2}),
+            "contact": forms.Select(attrs={"class": "form-control"}),
+            "date_started": forms.DateInput(attrs={"class": "form-control datepicker"}),
+            "lang": forms.Select(attrs={"class": "form-control"}),
+            "notes": forms.Textarea(attrs={"class": "form-control", "cols": 20, "rows": 2}),
         }
 
-    def __init__(self,  user, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         self.created_by = user
         super(LangTrackNewForm, self).__init__(*args, **kwargs)
 
@@ -69,17 +76,16 @@ class LangTrackNewForm(ModelForm):
         entry.created_by = self.created_by
         entry.save()
 
-class LangTrackForm(ModelForm):
+
+class LangTrackForm(forms.ModelForm):
     class Meta:
         model = OBSTracking
-        fields = ['contact', 'date_started', 'notes']
+        fields = ["contact", "date_started", "notes"]
         widgets = {
-            'contact': Select(attrs={'class': 'form-control'}),
-            'date_started': DateInput(attrs={'class':
-                                                  'form-control datepicker'}),
-            'lang': Select(attrs={'class': 'form-control'}),
-            'notes': Textarea(attrs={'class':'form-control', 'cols': 20,
-                                                                  'rows': 2}),
+            "contact": forms.Select(attrs={"class": "form-control"}),
+            "date_started": forms.DateInput(attrs={"class": "form-control datepicker"}),
+            "lang": forms.Select(attrs={"class": "form-control"}),
+            "notes": forms.Textarea(attrs={"class": "form-control", "cols": 20, "rows": 2}),
         }
 
     def __init__(self, lang, user, *args, **kwargs):
@@ -93,69 +99,60 @@ class LangTrackForm(ModelForm):
         entry.created_by = self.created_by
         entry.save()
 
-class LangPubForm(ModelForm):
+
+class LangPubForm(forms.ModelForm):
     class Meta:
         model = OBSPublishing
-        fields = [ 'publish_date', 'version', 'source_text', 'source_version',
-                             'checking_entity', 'checking_level', 'comments' ]
+        fields = ["publish_date", "version", "source_text", "source_version", "checking_entity", "checking_level", "comments"]
         widgets = {
-            'publish_date': DateInput(attrs={'class':
-                                     'form-control datepicker', 'size': '8'}),
-            'comments': Textarea(attrs={'class':'form-control', 'cols': 20,
-                                                                  'rows': 2}),
-            'version': TextInput(attrs={'class':'form-control', 'size': '5'}),
-            'source_version': TextInput(attrs={'class':'form-control', 'size': '5'}),
-            'checking_entity': CheckboxSelectMultiple(attrs={'class':
-                                                             'form-control'}),
-            'checking_level': Select(attrs={'class': 'form-control'}),
-            'source_text': Select(attrs={'class': 'form-control'}),
-            'lang': Select(attrs={'class': 'form-control'}),
+            "publish_date": forms.DateInput(attrs={"class": "form-control datepicker", "size": "8"}),
+            "comments": forms.Textarea(attrs={"class": "form-control", "cols": 20, "rows": 2}),
+            "version": forms.TextInput(attrs={"class": "form-control", "size": "5"}),
+            "source_version": forms.TextInput(attrs={"class": "form-control", "size": "5"}),
+            "checking_entity": forms.CheckboxSelectMultiple(),
+            "checking_level": forms.Select(attrs={"class": "form-control"}),
+            "source_text": forms.Select(attrs={"class": "form-control"}),
+            "lang": forms.Select(attrs={"class": "form-control"}),
         }
 
     def __init__(self, lang, user, *args, **kwargs):
         self.created_by = user
         self.lang = lang
         super(LangPubForm, self).__init__(*args, **kwargs)
-        self.fields['checking_entity'].queryset = Organization.objects.filter(
-                                                         checking_entity=True)
+        self.fields["checking_entity"].queryset = Organization.objects.filter(checking_entity=True)
 
     def save(self):
         entry = super(LangPubForm, self).save(commit=False)
         entry.lang = self.lang
         entry.created_by = self.created_by
         entry.save()
-        for contrib in getContrib(self.lang):
+        for contrib in get_contrib(self.lang):
             entry.contributors.add(contrib)
 
-class LangPubNewForm(ModelForm):
+
+class LangPubNewForm(forms.ModelForm):
     class Meta:
         model = OBSPublishing
-        fields = [ 'lang', 'publish_date', 'version', 'source_text',
-                   'source_version', 'checking_entity', 'checking_level',
-                                                                  'comments' ]
+        fields = ["lang", "publish_date", "version", "source_text", "source_version", "checking_entity", "checking_level", "comments"]
         widgets = {
-            'publish_date': DateInput(attrs={'class':
-                                     'form-control datepicker', 'size': '8'}),
-            'comments': Textarea(attrs={'class':'form-control', 'cols': 20,
-                                                                  'rows': 2}),
-            'version': TextInput(attrs={'class':'form-control', 'size': '5'}),
-            'source_version': TextInput(attrs={'class':'form-control', 'size': '5'}),
-            'checking_entity': CheckboxSelectMultiple(attrs={'class':
-                                                             'form-control'}),
-            'checking_level': Select(attrs={'class': 'form-control'}),
-            'source_text': Select(attrs={'class': 'form-control'}),
-            'lang': Select(attrs={'class': 'form-control'}),
+            "publish_date": forms.DateInput(attrs={"class": "form-control datepicker", "size": "8"}),
+            "comments": forms.Textarea(attrs={"class": "form-control", "cols": 20, "rows": 2}),
+            "version": forms.TextInput(attrs={"class": "form-control", "size": "5"}),
+            "source_version": forms.TextInput(attrs={"class": "form-control", "size": "5"}),
+            "checking_entity": forms.CheckboxSelectMultiple(),
+            "checking_level": forms.Select(attrs={"class": "form-control"}),
+            "source_text": forms.Select(attrs={"class": "form-control"}),
+            "lang": forms.Select(attrs={"class": "form-control"}),
         }
 
     def __init__(self, user, *args, **kwargs):
         self.created_by = user
         super(LangPubNewForm, self).__init__(*args, **kwargs)
-        self.fields['checking_entity'].queryset = Organization.objects.filter(
-                                                         checking_entity=True)
+        self.fields["checking_entity"].queryset = Organization.objects.filter(checking_entity=True)
 
     def save(self):
         entry = super(LangPubNewForm, self).save(commit=False)
         entry.created_by = self.created_by
         entry.save()
-        for contrib in getContrib(entry.lang.langcode):
+        for contrib in get_contrib(entry.lang.langcode):
             entry.contributors.add(contrib)

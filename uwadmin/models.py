@@ -101,11 +101,11 @@ class OBSTracking(models.Model):
 
 class OBSPublishing(models.Model):
 
-    CHECKING_LEVEL_CHOICES = (
-      (1, "1"),
-      (2, "2"),
-      (3, "3"),
-    )
+    CHECKING_LEVEL_CHOICES = [
+        (1, "1"),
+        (2, "2"),
+        (3, "3"),
+    ]
 
     lang = models.ForeignKey(LangCode, related_name="publications")
     publish_date = models.DateField()

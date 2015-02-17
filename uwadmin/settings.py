@@ -186,6 +186,6 @@ AUTHENTICATION_BACKENDS = [
 
 # Override above settings with anything in local_settings
 try:
-    from local_settings import *
+    from local_settings import *  # noqa
 except ImportError:
     pass
