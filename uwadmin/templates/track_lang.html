@@ -27,6 +27,7 @@
                             <tr>
                                 <th>Contact</th>
                                 <th>Notes</th>
+                                <th>Offline</th>
                                 <th>Date Started</th>
                                 <th>Added By</th>
                                 <th>Datestamp</th>
@@ -37,6 +38,7 @@
                             <tr>
                                 <td>{{ entry.contact.name }}</td>
                                 <td>{{ entry.notes|linebreaks }}</td>
+                                <td>{% if entry.offline %}<i class="fa fa-check"></i>{% endif %}</td>
                                 <td>{{ entry.date_started }}</td>
                                 <td>{{ entry.created_by.username }}</td>
                                 <td>{{ entry.created }} </td>

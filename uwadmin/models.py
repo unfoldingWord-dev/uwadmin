@@ -89,6 +89,7 @@ class OBSTracking(models.Model):
     contact = models.ForeignKey(Contact, related_name="tracking")
     date_started = models.DateField()
     notes = models.TextField(blank=True)
+    offline = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User)
 

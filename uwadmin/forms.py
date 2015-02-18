@@ -59,7 +59,7 @@ class ConnectionForm(forms.ModelForm):
 class LangTrackNewForm(forms.ModelForm):
     class Meta:
         model = OBSTracking
-        fields = ["lang", "contact", "date_started", "notes"]
+        fields = ["lang", "contact", "date_started", "notes", "offline"]
         widgets = {
             "contact": forms.Select(attrs={"class": "form-control"}),
             "date_started": forms.DateInput(attrs={"class": "form-control datepicker"}),
@@ -80,7 +80,7 @@ class LangTrackNewForm(forms.ModelForm):
 class LangTrackForm(forms.ModelForm):
     class Meta:
         model = OBSTracking
-        fields = ["contact", "date_started", "notes"]
+        fields = ["contact", "date_started", "notes", "offline"]
         widgets = {
             "contact": forms.Select(attrs={"class": "form-control"}),
             "date_started": forms.DateInput(attrs={"class": "form-control datepicker"}),
