@@ -1,16 +1,15 @@
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import CreateView, DetailView, ListView, UpdateView, View
+from django.shortcuts import redirect
+from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from django.contrib import messages
-from django.contrib.sites.models import Site
 
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 
-from .models import Contact, OBSTracking, OBSPublishing, LangCode
-from .forms import RecentComForm, ConnectionForm, LangTrackNewForm, LangPubNewForm, LangTrackForm, LangPubForm
+from .models import Contact, OpenBibleStory
+from .forms import RecentComForm, ConnectionForm, OpenBibleStoryForm
 
 
 @login_required
@@ -92,117 +91,34 @@ class ContactCreate(ContactMixin, CreateView):
     template_name = "contact_create.html"
 
 
-class TrackAll(LoginRequiredMixin, View):
-    template_name = "track_all.html"
-    model = LangCode  # @@@ do not think this is used anywhere
+class OpenBibleStoryCreateView(LoginRequiredMixin, CreateView):
+    form_class = OpenBibleStoryForm
+    model = OpenBibleStory
 
-    def setup(self, request):
-        entries = {}
-        for x in OBSTracking.objects.all():
-            if x.lang.langcode not in entries:
-                entries[x.lang.langcode] = x.lang.langname
-        return {"object_list": entries}
+    def get_success_url(self):
+        return reverse("obs_list")
 
-    def get(self, request, *args, **kwargs):
-        context = self.setup(request)
-        context["form"] = LangTrackNewForm(self.request.user)
-        return render(request, self.template_name, context)
-
-    def post(self, request, *args, **kwargs):
-        context = self.setup(request)
-        form = LangTrackNewForm(self.request.user, request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("track_language", form.cleaned_data["lang"])
-        else:
-            context["form"] = form
-            return render(request, self.template_name, context)
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.created_by = self.request.user
+        self.object.save()
+        # @@@ Publish forms used to:
+        # for contrib in get_contrib(self.lang):
+        #     entry.contributors.add(contrib)
+        return redirect(self.get_success_url())
 
 
-class TrackLang(LoginRequiredMixin, DetailView):
-    template_name = "track_lang.html"
-    model = LangCode
-    slug_field = "langcode"
+class OpenBibleStoryUpdateView(LoginRequiredMixin, UpdateView):
+    form_class = OpenBibleStoryForm
+    model = OpenBibleStory
 
-    def get_context_data(self, **kwargs):
-        context = super(TrackLang, self).get_context_data(**kwargs)
-        object_list = OBSTracking.objects.filter(lang=self.object)
-        context.update({
-            "lang": self.object,
-            "object_list": object_list,
-            "form": LangTrackForm(self.object, self.request.user)
-        })
-        return context
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        context = self.get_context_data(object=self.object)
-        form = LangTrackForm(self.object, self.request.user, request.POST)
-        if form.is_valid():
-            form.save()
-            messages.info(self.request, "Entry added")
-            return redirect("track_language", self.object.langcode)
-        else:
-            context["form"] = form
-        return self.render_to_response(context)
+    def get_success_url(self):
+        return reverse("obs_list")
 
 
-class PubAll(LoginRequiredMixin, View):
-    template_name = "pub_all.html"
-
-    def setup(self, request):
-        entries = {}
-        for x in OBSPublishing.objects.all().order_by("-publish_date"):
-            if x.lang.langcode not in entries:
-                entries[x.lang.langcode] = {
-                    "name": x.lang.langname,
-                    "publish_date": x.publish_date,
-                    "version": x.version
-                }
-        return {"object_list": entries}
-
-    def get(self, request, *args, **kwargs):
-        context = self.setup(request)
-        context["form"] = LangPubNewForm(self.request.user)
-        return render(request, self.template_name, context)
-
-    def post(self, request, *args, **kwargs):
-        context = self.setup(request)
-        form = LangPubNewForm(self.request.user, request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("publish_language", form.cleaned_data["lang"])
-        else:
-            context["form"] = form
-            return render(request, self.template_name, context)
+class OpenBibleStoryListView(LoginRequiredMixin, ListView):
+    model = OpenBibleStory
 
 
-class PubLang(LoginRequiredMixin, View):
-    template_name = "pub_lang.html"
-
-    def setup(self, request):
-        self.lang = get_object_or_404(LangCode, langcode=self.args[0])
-        context = {
-            "object_list": OBSPublishing.objects.filter(lang=self.lang).order_by("-publish_date")
-        }
-        context["lang"] = self.lang
-        return context
-
-    def get(self, request, *args, **kwargs):
-        context = self.setup(request)
-        context["form"] = LangPubForm(self.lang, self.request.user)
-        context.update({
-            "site": Site.objects.get_current()
-        })
-        return render(request, self.template_name, context)
-
-    def post(self, request, *args, **kwargs):
-        context = self.setup(request)
-        form = LangPubForm(self.lang, self.request.user, request.POST)
-        if form.is_valid():
-            form.save()
-            context["success"] = "Entry added."
-            context["form"] = LangPubForm(self.lang, self.request.user)
-        else:
-            context["form"] = form
-        return render(request, self.template_name, context)
+class OpenBibleStoryDetailView(LoginRequiredMixin, DetailView):
+    model = OpenBibleStory

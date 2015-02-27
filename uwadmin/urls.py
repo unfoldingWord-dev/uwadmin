@@ -11,10 +11,10 @@ from .views import (
     ContactCreate,
     ContactDetail,
     ContactUpdate,
-    PubAll,
-    PubLang,
-    TrackAll,
-    TrackLang
+    OpenBibleStoryListView,
+    OpenBibleStoryCreateView,
+    OpenBibleStoryUpdateView,
+    OpenBibleStoryDetailView
 )
 
 
@@ -28,10 +28,10 @@ urlpatterns = patterns(
     url(r"^contacts/create/$", ContactCreate.as_view(), name="contact_create"),
     url(r"^contacts/(?P<pk>\d+)/$", ContactDetail.as_view(), name="contact_detail"),
     url(r"^contacts/(?P<pk>\d+)/update/$", ContactUpdate.as_view(), name="contact_update"),
-    url(r"^publish/$", PubAll.as_view(), name="publish_all"),
-    url(r"^publish/([\w-]+)/$", PubLang.as_view(), name="publish_language"),
-    url(r"^track/$", TrackAll.as_view(), name="track_all"),
-    url(r"^track/(?P<slug>[\w-]+)/$", TrackLang.as_view(), name="track_language"),
+    url(r"^obs/$", OpenBibleStoryListView.as_view(), name="obs_list"),
+    url(r"^obs/create/$", OpenBibleStoryCreateView.as_view(), name="obs_create"),
+    url(r"^obs/(?P<pk>\d+)/$", OpenBibleStoryDetailView.as_view(), name="obs_detail"),
+    url(r"^obs/(?P<pk>\d+)/update/$", OpenBibleStoryUpdateView.as_view(), name="obs_update"),
 )
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
