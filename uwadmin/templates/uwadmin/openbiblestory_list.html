@@ -1,0 +1,73 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load bootstrap %}
+
+{% block head_title %}{% trans "Open Bible Stories" %}{% endblock %}
+
+{% block body %}
+    <ul class="breadcrumb">
+        <li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
+        <li>{% trans "Open Bible Stories" %}</li>
+    </ul>
+
+    <div class="panel panel-default">
+        <div class="panel-heading panel-heading-with-table">
+            <a href="{% url "obs_create" %}" class="btn btn-xs btn-primary pull-right">
+                <i class="fa fa-plus"></i>
+                Add
+            </a>
+            <h2 class="panel-title">{% trans "Open Bible Stories" %}</h2>
+        </div>
+        {% if object_list %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Language</th>
+                        <th>Contact</th>
+                        <th>Date Started</th>
+                        <th>Notes</th>
+                        <th>Offline</th>
+                        <th>Publish Date</th>
+                        <th>Version</th>
+                        <th>Source Text</th>
+                        <th>Source Version</th>
+                        <th>Checking Entity</th>
+                        <th>Checking Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obs in object_list %}
+                        <tr>
+                            <td>
+                                <a href="{% url "obs_update" obs.pk %}" class="btn btn-xs btn-default">
+                                    <i class="fa fa-pencil"></i>
+                                    Edit
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{% url "obs_detail" obs.pk %}">
+                                    {{ obs.lang.langname }} ({{ obs.lang.langcode }})
+                                </a>
+                            </td>
+                            <td>{{ obs.contqct }}</td>
+                            <td>{{ obs.date_started }}</td>
+                            <td>{{ obs.notes }}</td>
+                            <td>{{ obs.offline }}</td>
+                            <td>{{ obs.publish_date }}</td>
+                            <td>{{ obs.version }}</td>
+                            <td>{{ obs.source_text }}</td>
+                            <td>{{ obs.source_version }}</td>
+                            <td>{{ obs.checking_entity.all }}</td>
+                            <td>{{ obs.checking_level }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="panel-body">None, <a href="{% url "obs_create" %}">add one</a>!</div>
+        {% endif %}
+    </div>
+
+{% endblock %}

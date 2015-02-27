@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from django.contrib.auth.models import User
 
@@ -84,14 +85,30 @@ class RecentCommunication(models.Model):
         return self.contact.name
 
 
-class OBSTracking(models.Model):
-    lang = models.ForeignKey(LangCode, related_name="tracking", verbose_name="Language.")
-    contact = models.ForeignKey(Contact, related_name="tracking")
+class OpenBibleStory(models.Model):
+    CHECKING_LEVEL_CHOICES = [
+        (1, "1"),
+        (2, "2"),
+        (3, "3"),
+    ]
+
+    # Base + Tracking
+    lang = models.ForeignKey(LangCode, related_name="resources", verbose_name="Language.")
+    contact = models.ForeignKey(Contact, related_name="resources")
     date_started = models.DateField()
     notes = models.TextField(blank=True)
     offline = models.BooleanField(default=False)
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(User)
+
+    # Publishing
+    publish_date = models.DateField(null=True, blank=True)
+    version = models.CharField(max_length=10, blank=True)
+    source_text = models.ForeignKey(LangCode, null=True, blank=True, related_name="+")
+    source_version = models.CharField(max_length=10, blank=True)
+    checking_entity = models.ManyToManyField(Contact, related_name="resource_publications", blank=True)
+    contributors = models.ManyToManyField(Contact, related_name="+", blank=True)
+    checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES, null=True, blank=True)
 
     class Meta:
         ordering = ["lang", "contact"]
@@ -100,28 +117,8 @@ class OBSTracking(models.Model):
         return self.lang.langcode
 
 
-class OBSPublishing(models.Model):
-
-    CHECKING_LEVEL_CHOICES = [
-        (1, "1"),
-        (2, "2"),
-        (3, "3"),
-    ]
-
-    lang = models.ForeignKey(LangCode, related_name="publications")
-    publish_date = models.DateField()
-    version = models.CharField(max_length=10)
-    source_text = models.ForeignKey(LangCode)
-    source_version = models.CharField(max_length=10)
-    checking_entity = models.ManyToManyField(Contact, related_name="publications")
-    contributors = models.ManyToManyField(Contact)
-    checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES)
-    comments = models.TextField(blank=True)
-    created = models.DateTimeField(auto_now_add=True)
+class Comment(models.Model):
+    open_bible_story = models.ForeignKey(OpenBibleStory, related_name="comments")
+    comment = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(User)
-
-    class Meta:
-        ordering = ["lang"]
-
-    def __unicode__(self):
-        return self.lang.langcode

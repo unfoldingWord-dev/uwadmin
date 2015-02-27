@@ -1,0 +1,35 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load bootstrap %}
+
+{% block head_title %}{% if openbiblestory %}Update{% else %}Create{% endif %} Open Bible Story{% endblock %}
+
+{% block body %}
+    <ul class="breadcrumb">
+        <li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
+        <li><a href="{% url "obs_list" %}">{% trans "Open Bible Stories" %}</a></li>
+        <li>{% if openbiblestory %}Update{% else %}Create{% endif %} Open Bible Story</li>
+    </ul>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title">
+                        {% if openbiblestory %}Update{% else %}Create{% endif %} Open Bible Story
+                    </h2>
+                </div>
+                <div class="panel-body">
+                    <form action="" method="post" class="form">
+                        {% csrf_token %}
+                        {{ form|bootstrap }}
+                        <button type="submit" class="btn btn-primary pull-right">
+                            {% if openbiblestory %}Update{% else %}Create{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
