@@ -135,7 +135,6 @@ class OpenBibleStoryCreateView(LoginRequiredMixin, CreateView):
                 checking_entity=obs.checking_entity.all(),
                 checking_level=obs.checking_level
             ))
-            print initial
         except OpenBibleStory.DoesNotExist:
             pass
         return initial

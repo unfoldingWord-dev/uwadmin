@@ -3,10 +3,19 @@ from django.utils import timezone
 
 from django.contrib.auth.models import User
 
+import requests
+
 
 class LangCode(models.Model):
     langcode = models.CharField(max_length=25, unique=True, verbose_name="Language Code")
     langname = models.CharField(max_length=255, verbose_name="Language Name")
+    checking_level = models.IntegerField(null=True)
+
+    @classmethod
+    def update_checking_levels(cls):
+        catalog = requests.get("https://api.unfoldingword.org/obs/txt/1/obs-catalog.json").json()
+        for lang in catalog:
+            cls.objects.filter(langcode=lang["language"]).update(checking_level=lang["status"]["checking_level"])
 
     class Meta:
         ordering = ["langcode"]

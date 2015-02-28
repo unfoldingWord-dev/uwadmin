@@ -56,6 +56,12 @@ class ConnectionForm(forms.ModelForm):
 
 
 class OpenBibleStoryForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(OpenBibleStoryForm, self).__init__(*args, **kwargs)
+        self.fields["lang"].queryset = self.fields["lang"].queryset.filter(checking_level=3)
+        self.fields["source_text"].queryset = self.fields["source_text"].queryset.filter(checking_level=3)
+
     class Meta:
         model = OpenBibleStory
         fields = [
