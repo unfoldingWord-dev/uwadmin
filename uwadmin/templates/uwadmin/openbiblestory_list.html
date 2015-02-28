@@ -34,8 +34,6 @@
                         <th>Source</th>
                         <th>Checking Entity</th>
                         <th>Checking Level</th>
-                        <th>Created</th>
-                        <th>Created By</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,6 +49,10 @@
                                 <a href="{% url "obs_detail" obs.pk %}">
                                     {{ obs.lang.langname }} ({{ obs.lang.langcode }})
                                 </a>
+                                <br />
+                                <small class="text-muted">
+                                    {{ obs.created }} / {{ obs.created_by }}
+                                </small>
                             </td>
                             <td>{{ obs.contqct }}</td>
                             <td>{{ obs.date_started }}</td>
@@ -64,8 +66,6 @@
                             </td>
                             <td>{% for c in obs.checking_entity.all %}{{ c.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                             <td>{{ obs.checking_level|default:"" }}</td>
-                            <td>{{ obs.created }}</td>
-                            <td>{{ obs.created_by }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
