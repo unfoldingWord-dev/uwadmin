@@ -156,6 +156,11 @@ class OpenBibleStoryCreateView(LoginRequiredMixin, CreateView):
 class OpenBibleStoryListView(LoginRequiredMixin, ListView):
     model = OpenBibleStory
 
+    def get_queryset(self, **kwargs):
+        qs = super(OpenBibleStoryListView, self).get_queryset(**kwargs)
+        qs = qs.order_by("lang__langname", "-created")
+        return qs
+
 
 class OpenBibleStoryDetailView(LoginRequiredMixin, DetailView):
     model = OpenBibleStory
