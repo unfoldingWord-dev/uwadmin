@@ -13,7 +13,6 @@ from .views import (
     ContactUpdate,
     OpenBibleStoryListView,
     OpenBibleStoryCreateView,
-    OpenBibleStoryUpdateView,
     OpenBibleStoryDetailView
 )
 
@@ -31,7 +30,7 @@ urlpatterns = patterns(
     url(r"^obs/$", OpenBibleStoryListView.as_view(), name="obs_list"),
     url(r"^obs/create/$", OpenBibleStoryCreateView.as_view(), name="obs_create"),
     url(r"^obs/(?P<pk>\d+)/$", OpenBibleStoryDetailView.as_view(), name="obs_detail"),
-    url(r"^obs/(?P<pk>\d+)/update/$", OpenBibleStoryUpdateView.as_view(), name="obs_update"),
+    url(r"^obs/(?P<code>[\w-]+)/update/$", OpenBibleStoryCreateView.as_view(), name="obs_update"),
 )
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

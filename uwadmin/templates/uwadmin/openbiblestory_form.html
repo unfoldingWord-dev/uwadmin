@@ -3,13 +3,13 @@
 {% load i18n %}
 {% load bootstrap %}
 
-{% block head_title %}{% if openbiblestory %}Update{% else %}Create{% endif %} Open Bible Story{% endblock %}
+{% block head_title %}{% if lang %}Update{% else %}Create{% endif %} Open Bible Story{% endblock %}
 
 {% block body %}
     <ul class="breadcrumb">
         <li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
         <li><a href="{% url "obs_list" %}">{% trans "Open Bible Stories" %}</a></li>
-        <li>{% if openbiblestory %}Update{% else %}Create{% endif %} Open Bible Story</li>
+        <li>{% if lang %}Update{% else %}Create{% endif %} Open Bible Story</li>
     </ul>
 
     <div class="row">
@@ -17,7 +17,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h2 class="panel-title">
-                        {% if openbiblestory %}Update{% else %}Create{% endif %} Open Bible Story
+                        {% if lang %}Update{% else %}Create{% endif %} Open Bible Story{% if lang %} for {{ lang.langname }}{% endif %}
                     </h2>
                 </div>
                 <div class="panel-body">
@@ -25,7 +25,7 @@
                         {% csrf_token %}
                         {{ form|bootstrap }}
                         <button type="submit" class="btn btn-primary pull-right">
-                            {% if openbiblestory %}Update{% else %}Create{% endif %}
+                            {% if lang %}Update{% else %}Create{% endif %}
                         </button>
                     </form>
                 </div>

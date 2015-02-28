@@ -1,6 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from django.contrib import messages
@@ -8,7 +8,7 @@ from django.contrib import messages
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 
-from .models import Contact, OpenBibleStory
+from .models import Contact, OpenBibleStory, LangCode
 from .forms import RecentComForm, ConnectionForm, OpenBibleStoryForm
 
 
@@ -98,22 +98,59 @@ class OpenBibleStoryCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse("obs_list")
 
+    @property
+    def lang(self):
+        if not hasattr(self, "_lang"):
+            if self.kwargs.get("code"):
+                self._lang = get_object_or_404(LangCode, langcode=self.kwargs.get("code"))
+            else:
+                self._lang = None
+        return self._lang
+
+    def get_context_data(self, **kwargs):
+        context = super(OpenBibleStoryCreateView, self).get_context_data(**kwargs)
+        if self.lang:
+            context.update(dict(lang=self.lang))
+        return context
+
+    def get_form(self, form_class):
+        form = super(OpenBibleStoryCreateView, self).get_form(form_class)
+        if self.lang:
+            del form.fields["lang"]
+        return form
+
+    def get_initial(self):
+        initial = super(OpenBibleStoryCreateView, self).get_initial()
+        try:
+            obs = OpenBibleStory.objects.filter(lang=self.lang).latest("created")
+            initial.update(dict(
+                contact=obs.contact,
+                date_started=obs.date_started,
+                notes=obs.notes,
+                offline=obs.offline,
+                publish_date=obs.publish_date,
+                version=obs.version,
+                source_text=obs.source_text,
+                source_version=obs.source_version,
+                checking_entity=obs.checking_entity.all(),
+                checking_level=obs.checking_level
+            ))
+            print initial
+        except OpenBibleStory.DoesNotExist:
+            pass
+        return initial
+
     def form_valid(self, form):
         self.object = form.save(commit=False)
+        if self.lang:
+            self.object.lang = self.lang
         self.object.created_by = self.request.user
         self.object.save()
+        form.save_m2m()
         # @@@ Publish forms used to:
         # for contrib in get_contrib(self.lang):
         #     entry.contributors.add(contrib)
         return redirect(self.get_success_url())
-
-
-class OpenBibleStoryUpdateView(LoginRequiredMixin, UpdateView):
-    form_class = OpenBibleStoryForm
-    model = OpenBibleStory
-
-    def get_success_url(self):
-        return reverse("obs_list")
 
 
 class OpenBibleStoryListView(LoginRequiredMixin, ListView):
