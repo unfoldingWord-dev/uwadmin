@@ -116,13 +116,13 @@ class OpenBibleStoryCreateView(LoginRequiredMixin, CreateView):
     def get_form(self, form_class):
         form = super(OpenBibleStoryCreateView, self).get_form(form_class)
         if self.lang:
-            del form.fields["lang"]
+            del form.fields["language"]
         return form
 
     def get_initial(self):
         initial = super(OpenBibleStoryCreateView, self).get_initial()
         try:
-            obs = OpenBibleStory.objects.filter(lang=self.lang).latest("created")
+            obs = OpenBibleStory.objects.filter(language=self.lang).latest("created")
             initial.update(dict(
                 contact=obs.contact,
                 date_started=obs.date_started,
@@ -157,7 +157,7 @@ class OpenBibleStoryListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self, **kwargs):
         qs = super(OpenBibleStoryListView, self).get_queryset(**kwargs)
-        qs = qs.order_by("lang__langname", "-created")
+        qs = qs.order_by("language__langname", "-created")
         return qs
 
 

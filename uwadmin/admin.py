@@ -58,11 +58,11 @@ class RecentCommunicationAdmin(admin.ModelAdmin):
 
 
 class OpenBibleStoryAdmin(admin.ModelAdmin):
-    list_display = ["lang", "contact", "date_started", "notes", "publish_date", "version", "checking_level", "source_text", "source_version", "created", "created_by"]
-    list_display_links = ["lang"]
+    list_display = ["language", "contact", "date_started", "notes", "publish_date", "version", "checking_level", "source_text", "source_version", "created", "created_by"]
+    list_display_links = ["language"]
     list_editable = ["contact", "notes"]
     list_filter = ["contact", "date_started", "checking_level", "publish_date", "version", "source_text", "source_version"]
-    search_fields = ["contact", "notes", "lang", "publish_date", "version", "checking_entity", "checking_level", "contributors", "source_text", "source_version", "created_by"]
+    search_fields = ["contact", "notes", "language", "publish_date", "version", "checking_entity", "checking_level", "contributors", "source_text", "source_version", "created_by"]
 
 
 admin.site.register(LangCode, LangCodeAdmin)

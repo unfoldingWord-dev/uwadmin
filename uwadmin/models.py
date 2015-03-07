@@ -107,9 +107,10 @@ class OpenBibleStory(models.Model):
         (3, "3"),
     ]
 
-    # Base + Tracking
-    lang = models.ForeignKey(LangCode, related_name="resources", verbose_name="Language.")
-    contact = models.ForeignKey(Contact, related_name="resources")
+    language = models.OneToOneField(LangCode, related_name="open_bible_story", verbose_name="Language")
+
+    # Tracking
+    contact = models.ForeignKey(Contact, related_name="open_bible_stories")
     date_started = models.DateField()
     notes = models.TextField(blank=True)
     offline = models.BooleanField(default=False)
@@ -126,10 +127,10 @@ class OpenBibleStory(models.Model):
     checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES, null=True, blank=True)
 
     class Meta:
-        ordering = ["lang", "contact"]
+        ordering = ["language", "contact"]
 
     def __unicode__(self):
-        return self.lang.langcode
+        return self.language.langcode
 
 
 class Comment(models.Model):
