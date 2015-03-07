@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 import requests
+import reversion
 
 
 class LangCode(models.Model):
@@ -100,6 +101,7 @@ class RecentCommunication(models.Model):
         return self.contact.name
 
 
+@reversion.register()
 class OpenBibleStory(models.Model):
     CHECKING_LEVEL_CHOICES = [
         (1, "1"),
@@ -125,6 +127,9 @@ class OpenBibleStory(models.Model):
     checking_entity = models.ManyToManyField(Contact, related_name="resource_publications", blank=True)
     contributors = models.ManyToManyField(Contact, related_name="+", blank=True)
     checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES, null=True, blank=True)
+
+    def versions(self):
+        return reversion.get_for_object(self)
 
     class Meta:
         ordering = ["language", "contact"]

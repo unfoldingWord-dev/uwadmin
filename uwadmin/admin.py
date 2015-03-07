@@ -1,4 +1,8 @@
+from django.db.models import Q
+
 from django.contrib import admin
+
+import reversion
 
 from uwadmin.utils import door43_sync
 from uwadmin.models import (
@@ -57,11 +61,34 @@ class RecentCommunicationAdmin(admin.ModelAdmin):
     search_fields = ["contact", "communication"]
 
 
-class OpenBibleStoryAdmin(admin.ModelAdmin):
+class SourceTextFilter(admin.SimpleListFilter):
+    title = "Source Text"
+    parameter_name = "language"
+
+    def lookups(self, request, model_admin):
+        texts = [
+            (str(x.source_text.pk), x.source_text.langcode)
+            for x in
+            model_admin.queryset(request).filter(source_text__checking_level=3).distinct()
+        ]
+        if model_admin.queryset(request).filter(source_text__isnull=True).exists():
+            texts.append(("NoneSelected", "None"))
+        return texts
+
+    def queryset(self, request, queryset):
+        print self.value()
+        if self.value() == "NoneSelected":
+            return queryset.filter(source_text__isnull=True)
+        if self.value():
+            return queryset.filter(source_text__pk=self.value())
+        return queryset.filter(Q(source_text__isnull=True) | Q(source_text__checking_level=3))
+
+
+class OpenBibleStoryAdmin(reversion.VersionAdmin):
     list_display = ["language", "contact", "date_started", "notes", "publish_date", "version", "checking_level", "source_text", "source_version", "created", "created_by"]
     list_display_links = ["language"]
     list_editable = ["contact", "notes"]
-    list_filter = ["contact", "date_started", "checking_level", "publish_date", "version", "source_text", "source_version"]
+    list_filter = ["contact", "date_started", "checking_level", "publish_date", "version", SourceTextFilter, "source_version"]
     search_fields = ["contact", "notes", "language", "publish_date", "version", "checking_entity", "checking_level", "contributors", "source_text", "source_version", "created_by"]
 
 

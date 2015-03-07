@@ -98,6 +98,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 
 
 MIDDLEWARE_CLASSES = [
+    "reversion.middleware.RevisionMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -133,6 +134,7 @@ INSTALLED_APPS = [
     "account",
     "eventlog",
     "metron",
+    "reversion",
 
     # project
     "uwadmin",

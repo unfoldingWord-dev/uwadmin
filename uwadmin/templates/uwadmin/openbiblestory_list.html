@@ -20,7 +20,7 @@
             <h2 class="panel-title">{% trans "Open Bible Stories" %}</h2>
         </div>
         {% if object_list %}
-            <table class="table table-striped">
+            <table class="table table-condensed">
                 <thead>
                     <tr>
                         <th></th>
@@ -39,34 +39,13 @@
                 <tbody>
                     {% for obs in object_list %}
                         <tr>
-                            <td>
-                                <a href="{% url "obs_update" obs.lang.langcode %}" class="btn btn-xs btn-default">
-                                    <i class="fa fa-pencil"></i>
-                                    Edit
-                                </a>
-                            </td>
-                            <td>
-                                <a href="{% url "obs_detail" obs.pk %}">
-                                    {{ obs.lang.langname }} ({{ obs.lang.langcode }})
-                                </a>
-                                <br />
-                                <small class="text-muted">
-                                    {{ obs.created }} / {{ obs.created_by }}
-                                </small>
-                            </td>
-                            <td>{{ obs.contqct }}</td>
-                            <td>{{ obs.date_started }}</td>
-                            <td>{{ obs.notes }}</td>
-                            <td>{% if obs.offline %}<i class="fa fa-fw fa-check"></i>{% endif %}</td>
-                            <td>{{ obs.publish_date|default:"" }}</td>
-                            <td>{{ obs.version|default:"" }}</td>
-                            <td>
-                                {% if obs.source_text %}{{ obs.source_text }}{% endif %}
-                                {% if obs.source_version %} v{{ obs.source_version }}{% endif %}
-                            </td>
-                            <td>{% for c in obs.checking_entity.all %}{{ c.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                            <td>{{ obs.checking_level|default:"" }}</td>
+                            {% include "uwadmin/_obs_row_data.html" %}
                         </tr>
+                        {% for version in obs.versions %}
+                            <tr class="version">
+                                {% include "uwadmin/_obs_row_data.html" with obs=version.object_version.object %}
+                            </tr>
+                        {% endfor %}
                     {% endfor %}
                 </tbody>
             </table>
