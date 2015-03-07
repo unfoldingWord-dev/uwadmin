@@ -17,6 +17,12 @@ class LangCode(models.Model):
         for lang in catalog:
             cls.objects.filter(langcode=lang["language"]).update(checking_level=lang["status"]["checking_level"])
 
+    @classmethod
+    def sync(cls):
+        data = requests.get("http://td.unfoldingword.org/exports/langnames.json").json()
+        for lang in data:
+            cls.objects.get_or_create(langcode=lang["lc"], defaults={"langname": lang["ln"]})
+
     class Meta:
         ordering = ["langcode"]
 

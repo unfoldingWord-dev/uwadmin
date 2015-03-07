@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from uwadmin.utils import td_sync_langs, door43_sync
+from uwadmin.utils import door43_sync
 from uwadmin.models import (
     LangCode,
     Contact,
@@ -16,12 +16,6 @@ class LangCodeAdmin(admin.ModelAdmin):
     list_display = ["langcode", "langname"]
     list_display_links = ["langcode"]
     search_fields = ["langcode", "langname"]
-    actions = ["td_sync"]
-
-    def td_sync(self, request, queryset):
-        created = td_sync_langs()  # @@@ consider making this a celery task
-        self.message_user(request, "Created: {0}".format(created))
-    td_sync.short_description = "tD Sync"
 
 
 class OrganizationAdmin(admin.ModelAdmin):

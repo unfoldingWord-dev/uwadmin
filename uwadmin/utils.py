@@ -1,37 +1,14 @@
 import codecs
 import glob
-import json
 import os
-import urllib2
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import Contact, LangCode
+from .models import Contact
 
 
 door43_users = "/var/www/vhosts/door43.org/httpdocs/conf/users.auth.php"
 door43_meta = "/var/www/vhosts/door43.org/httpdocs/data/meta/{0}/obs"
-lang_url = "http://td.unfoldingword.org/exports/langnames.json"
-
-
-def get_langs(url):
-    try:
-        request = urllib2.urlopen(url).read()
-    except:
-        request = "{}"
-    return json.loads(request)
-
-
-def td_sync_langs():
-    created = []
-    lang_info = get_langs(lang_url)
-    for l in lang_info:
-        obj, crtd = LangCode.objects.get_or_create(langcode=l["lc"])
-        if crtd:
-            obj.langname = l["ln"]
-            obj.save()
-            created.append(l["lc"])
-    return created
 
 
 def get_users(authfile):
