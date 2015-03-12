@@ -14,7 +14,7 @@
         <br />
     {% endif %}
     <small class="text-muted">
-        {{ obs.created }} / {{ obs.created_by }}
+        {% if version %}{{ version.revision.date_created }} / {{ version.revision.user }}{% else %}{{ obs.created }} / {{ obs.created_by }}{% endif %}
     </small>
 </td>
 <td>{{ obs.contqct }}</td>
