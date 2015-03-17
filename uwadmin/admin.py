@@ -4,7 +4,6 @@ from django.contrib import admin
 
 import reversion
 
-from uwadmin.utils import door43_sync
 from uwadmin.models import (
     LangCode,
     Contact,
@@ -46,12 +45,6 @@ class ContactAdmin(admin.ModelAdmin):
     list_display = ["name", "d43username", "email", "phone", "other"]
     list_display_links = ["name"]
     search_fields = ["name", "email", "phone", "other"]
-    actions = ["d43_sync"]
-
-    def d43_sync(self, request, queryset):
-        created = door43_sync()
-        self.message_user(request, "Created: {0}".format(created))
-    d43_sync.short_description = "Door43 User Sync"
 
 
 class RecentCommunicationAdmin(admin.ModelAdmin):
