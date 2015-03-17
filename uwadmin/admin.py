@@ -16,9 +16,10 @@ from uwadmin.models import (
 
 
 class LangCodeAdmin(admin.ModelAdmin):
-    list_display = ["langcode", "langname"]
+    list_display = ["langcode", "langname", "gateway_flag"]
     list_display_links = ["langcode"]
     search_fields = ["langcode", "langname"]
+    list_filter = ["gateway_flag"]
 
 
 class OrganizationAdmin(admin.ModelAdmin):

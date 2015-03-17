@@ -10,6 +10,7 @@ import reversion
 class LangCode(models.Model):
     langcode = models.CharField(max_length=25, unique=True, verbose_name="Language Code")
     langname = models.CharField(max_length=255, verbose_name="Language Name")
+    gateway_flag = models.BooleanField(default=False)
     checking_level = models.IntegerField(null=True)
 
     @classmethod
@@ -22,7 +23,14 @@ class LangCode(models.Model):
     def sync(cls):
         data = requests.get("http://td.unfoldingword.org/exports/langnames.json").json()
         for lang in data:
-            cls.objects.get_or_create(langcode=lang["lc"], defaults={"langname": lang["ln"]})
+            obj, created = cls.objects.get_or_create(
+                langcode=lang["lc"],
+                defaults={"langname": lang["ln"], "gateway_flag": lang["gw"]}
+            )
+            if not created:
+                obj.langname = lang["ln"]
+                obj.gateway_flag = lang["gw"]
+                obj.save()
 
     class Meta:
         ordering = ["langcode"]
