@@ -124,7 +124,7 @@ class OpenBibleStory(models.Model):
     version = models.CharField(max_length=10, blank=True)
     source_text = models.ForeignKey(LangCode, null=True, blank=True, related_name="+")
     source_version = models.CharField(max_length=10, blank=True)
-    checking_entity = models.ManyToManyField(Contact, related_name="resource_publications", blank=True)
+    checking_entity = models.ManyToManyField(Organization, related_name="resource_publications", blank=True)
     contributors = models.ManyToManyField(Contact, related_name="+", blank=True)
     checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES, null=True, blank=True)
 
