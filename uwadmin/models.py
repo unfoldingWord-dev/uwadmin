@@ -109,14 +109,15 @@ class RecentCommunication(models.Model):
         return self.contact.name
 
 
+CHECKING_LEVEL_CHOICES = [
+    (1, "1"),
+    (2, "2"),
+    (3, "3"),
+]
+
+
 @reversion.register()
 class OpenBibleStory(models.Model):
-    CHECKING_LEVEL_CHOICES = [
-        (1, "1"),
-        (2, "2"),
-        (3, "3"),
-    ]
-
     language = models.OneToOneField(LangCode, related_name="open_bible_story", verbose_name="Language")
 
     # Tracking
@@ -151,3 +152,18 @@ class Comment(models.Model):
     comment = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(User)
+
+
+class PublishRequest(models.Model):
+    requestor = models.CharField(max_length=100)
+    resource = models.CharField(max_length=20, choices=[("obs", "Open Bible Stories")], default="obs")
+    language = models.ForeignKey(LangCode)
+    checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES)
+    contributors = models.TextField(blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+
+class LicenseAgreement(models.Model):
+    publish_request = models.ForeignKey(PublishRequest)
+    document = models.FileField(upload_to="agreements/")
+

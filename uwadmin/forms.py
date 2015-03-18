@@ -1,6 +1,8 @@
 from django import forms
 
-from .models import RecentCommunication, Connection, OpenBibleStory
+from multiupload.fields import MultiFileField
+
+from .models import RecentCommunication, Connection, OpenBibleStory, PublishRequest
 
 
 class RecentComForm(forms.ModelForm):
@@ -76,4 +78,20 @@ class OpenBibleStoryForm(forms.ModelForm):
             "source_version",
             "checking_entity",
             "checking_level"
+        ]
+
+
+class PublishRequestForm(forms.ModelForm):
+
+    license_agreements = MultiFileField(min_num=1, max_file_size=1024*1024*5)
+
+    class Meta:
+        model = PublishRequest
+        fields = [
+            "requestor",
+            "resource",
+            "language",
+            "checking_level",
+            "contributors",
+            "license_agreements"
         ]

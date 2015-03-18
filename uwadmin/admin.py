@@ -11,7 +11,9 @@ from uwadmin.models import (
     Connection,
     ConnectionType,
     RecentCommunication,
-    OpenBibleStory
+    OpenBibleStory,
+    PublishRequest,
+    LicenseAgreement
 )
 
 
@@ -86,6 +88,16 @@ class OpenBibleStoryAdmin(reversion.VersionAdmin):
     search_fields = ["contact", "notes", "language", "publish_date", "version", "checking_entity", "checking_level", "contributors", "source_text", "source_version", "created_by"]
 
 
+class LicenseAgreementInline(admin.TabularInline):
+    model = LicenseAgreement
+
+
+class PublishRequestAdmin(admin.ModelAdmin):
+    list_display = ["requestor", "resource", "language", "checking_level", "contributors"]
+    list_filter = ["checking_level"]
+    inlines = [LicenseAgreementInline]
+
+
 admin.site.register(LangCode, LangCodeAdmin)
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Organization, OrganizationAdmin)
@@ -93,3 +105,5 @@ admin.site.register(Connection, ConnectionAdmin)
 admin.site.register(ConnectionType, ConnectionTypeAdmin)
 admin.site.register(RecentCommunication, RecentCommunicationAdmin)
 admin.site.register(OpenBibleStory, OpenBibleStoryAdmin)
+admin.site.register(PublishRequest, PublishRequestAdmin)
+

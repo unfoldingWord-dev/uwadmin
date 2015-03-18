@@ -8,8 +8,8 @@ from django.contrib import messages
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 
-from .models import Contact, OpenBibleStory, LangCode
-from .forms import RecentComForm, ConnectionForm, OpenBibleStoryForm
+from .forms import RecentComForm, ConnectionForm, OpenBibleStoryForm, PublishRequestForm
+from .models import Contact, OpenBibleStory, LangCode, PublishRequest
 
 
 @login_required
@@ -150,3 +150,15 @@ class OpenBibleStoryListView(LoginRequiredMixin, ListView):
 
 class OpenBibleStoryDetailView(LoginRequiredMixin, DetailView):
     model = OpenBibleStory
+
+
+class PublishRequestCreateView(CreateView):
+    model = PublishRequest
+    form_class = PublishRequestForm
+
+    def form_valid(self, form):
+        self.object = form.save()
+        for each in form.cleaned_data["license_agreements"]:
+            self.object.licenseagreement_set.create(document=each)
+        messages.info(self.request, "Thank you for your request")
+        return redirect("publish_request")
