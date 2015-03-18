@@ -33,7 +33,8 @@ urlpatterns = patterns(
     url(r"^obs/create/$", OpenBibleStoryCreateView.as_view(), name="obs_create"),
     url(r"^obs/(?P<pk>\d+)/$", OpenBibleStoryDetailView.as_view(), name="obs_detail"),
     url(r"^obs/(?P<code>[\w-]+)/update/$", OpenBibleStoryUpdateView.as_view(), name="obs_update"),
-    url(r"^publish/request/$", PublishRequestCreateView.as_view(), name="publish_request")
+    url(r"^publish/request/$", PublishRequestCreateView.as_view(), name="publish_request"),
+    url(r"^ac/langnames/", "uwadmin.views.languages_autocomplete", name="names_autocomplete"),
 )
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

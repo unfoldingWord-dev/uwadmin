@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
+from django.db.models import Q
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
@@ -162,3 +163,14 @@ class PublishRequestCreateView(CreateView):
             self.object.licenseagreement_set.create(document=each)
         messages.info(self.request, "Thank you for your request")
         return redirect("publish_request")
+
+
+def languages_autocomplete(request):
+    term = request.GET.get("q").lower().encode("utf-8")
+    langs = LangCode.objects.filter(Q(langcode__icontains=term)|Q(langname__icontains=term))
+    d = [
+        {"ln": x.langname, "lc": x.langcode, "gl": x.gateway_flag}
+        for x in langs
+    ]
+    return JsonResponse({"results": d, "count": len(d), "term": term})
+

@@ -8,6 +8,8 @@
     <link href="{% static "pinax/css/theme.css" %}" rel="stylesheet">
     <link href="{% static "css/site.css" %}" rel="stylesheet">
     <link href="https://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static "select2-3.5.2/select2.css" %}">
+    <link rel="stylesheet" href="{% static "select2-3.5.2/select2-bootstrap.css" %}">
     {% block extra_style %}{% endblock %}
 {% endblock %}
 
@@ -73,5 +75,7 @@
             });
         });
     </script>
+    <script src="{% static "select2-3.5.2/select2.min.js" %}"></script>
+    <script src="{% static "js/app.js" %}"></script>
     {% block extra_script %}{% endblock %}
 {% endblock %}

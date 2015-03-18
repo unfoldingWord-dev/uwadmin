@@ -1,8 +1,9 @@
 from django import forms
+from django.core.urlresolvers import reverse
 
 from multiupload.fields import MultiFileField
 
-from .models import RecentCommunication, Connection, OpenBibleStory, PublishRequest
+from .models import RecentCommunication, Connection, OpenBibleStory, PublishRequest, LangCode
 
 
 class RecentComForm(forms.ModelForm):
@@ -84,6 +85,30 @@ class OpenBibleStoryForm(forms.ModelForm):
 class PublishRequestForm(forms.ModelForm):
 
     license_agreements = MultiFileField(min_num=1, max_file_size=1024*1024*5)
+
+    def __init__(self, *args, **kwargs):
+        super(PublishRequestForm, self).__init__(*args, **kwargs)
+        self.fields["language"] = forms.CharField(
+            widget=forms.TextInput(
+                attrs={
+                    "class": "language-selector",
+                    "data-source-url": reverse("names_autocomplete")
+                }
+            ),
+            required=True
+        )
+        if self.instance.pk is not None:
+            print "instance", self.instance.language
+            lang = self.instance.language
+            if lang:
+                self.fields["language"].widget.attrs["data-lang-ln"] = lang.langname
+                self.fields["language"].widget.attrs["data-lang-lc"] = lang.langcode
+                self.fields["language"].widget.attrs["data-lang-gl"] = lang.gateway_flag
+
+    def clean_language(self):
+        lc = self.cleaned_data["language"]
+        if lc:
+            return LangCode.objects.get(langcode=lc)
 
     class Meta:
         model = PublishRequest
