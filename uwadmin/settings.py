@@ -135,6 +135,7 @@ INSTALLED_APPS = [
     "eventlog",
     "metron",
     "reversion",
+    "djcelery",
 
     # project
     "uwadmin",
@@ -185,6 +186,14 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 2
 AUTHENTICATION_BACKENDS = [
     "account.auth_backends.UsernameAuthenticationBackend",
 ]
+
+# Celery / Redis Backend configuration
+BROKER_URL = "redis://localhost:6379/0"
+CELERY_IGNORE_RESULT = True   # for now, we don't have any tasks that require looking at the result
+CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
+CELERY_TASK_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ["json", "msgpack", "yaml"]   # for security reasons, don't allow pickle
+
 
 # Override above settings with anything in local_settings
 try:

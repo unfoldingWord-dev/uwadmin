@@ -6,3 +6,8 @@ eventlog==0.10.0
 django-jsonfield==0.9.13
 django-reversion==1.8.5
 django-multiupload==0.3
+
+# Celery
+redis==2.10.3
+django-celery==3.1.16
+celery==3.1.17

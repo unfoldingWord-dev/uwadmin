@@ -12,6 +12,7 @@ from account.mixins import LoginRequiredMixin
 
 from .forms import RecentComForm, ConnectionForm, OpenBibleStoryForm, PublishRequestForm
 from .models import Contact, OpenBibleStory, LangCode, PublishRequest
+from .signals import published
 
 
 @login_required
@@ -110,6 +111,8 @@ class OpenBibleStoryCreateView(LoginRequiredMixin, CreateView):
         # @@@ Publish forms used to:
         # for contrib in get_contrib(self.lang):
         #     entry.contributors.add(contrib)
+        if self.object.publish_date is not None:
+            publish.send(sender=self, obs=self.object)
         return redirect(self.get_success_url())
 
 
@@ -138,13 +141,17 @@ class OpenBibleStoryUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
+        obs_published = False
         if form.cleaned_data["publish"] and self.object.publish_date is None:
             self.object.publish_date = timezone.now().date()
+            obs_published = True
         self.object.save()
         form.save_m2m()
         # @@@ Publish forms used to:
         # for contrib in get_contrib(self.lang):
         #     entry.contributors.add(contrib)
+        if obs_published:
+            published.send(sender=self, obs=self.object)
         return redirect("obs_list")
 
     def get_object(self):

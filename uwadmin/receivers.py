@@ -6,6 +6,14 @@ from account.signals import user_login_attempt, user_logged_in
 
 from eventlog.models import log
 
+from .tasks import publish
+from .signals import published
+
+
+@receiver(published)
+def handle_published(sender, obs, **kwargs):
+    publish.delay(obs.language.langcode)
+
 
 @receiver(user_logged_in)
 def handle_user_logged_in(sender, **kwargs):
