@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.db.models import Q
 from django.shortcuts import redirect, get_object_or_404
+from django.utils import timezone
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from django.contrib import messages
@@ -102,6 +103,8 @@ class OpenBibleStoryCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.created_by = self.request.user
+        if form.cleaned_data["publish"]:
+            self.object.publish_date = timezone.now().date()
         self.object.save()
         form.save_m2m()
         # @@@ Publish forms used to:
@@ -113,9 +116,6 @@ class OpenBibleStoryCreateView(LoginRequiredMixin, CreateView):
 class OpenBibleStoryUpdateView(LoginRequiredMixin, UpdateView):
     form_class = OpenBibleStoryForm
     model = OpenBibleStory
-
-    def get_success_url(self):
-        return reverse("obs_list")
 
     @property
     def lang(self):
@@ -135,6 +135,17 @@ class OpenBibleStoryUpdateView(LoginRequiredMixin, UpdateView):
         form = super(OpenBibleStoryUpdateView, self).get_form(form_class)
         del form.fields["language"]
         return form
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        if form.cleaned_data["publish"] and self.object.publish_date is None:
+            self.object.publish_date = timezone.now().date()
+        self.object.save()
+        form.save_m2m()
+        # @@@ Publish forms used to:
+        # for contrib in get_contrib(self.lang):
+        #     entry.contributors.add(contrib)
+        return redirect("obs_list")
 
     def get_object(self):
         return get_object_or_404(OpenBibleStory, language=self.lang)

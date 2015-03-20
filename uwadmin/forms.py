@@ -60,10 +60,14 @@ class ConnectionForm(forms.ModelForm):
 
 class OpenBibleStoryForm(forms.ModelForm):
 
+    publish = forms.BooleanField(required=False)
+
     def __init__(self, *args, **kwargs):
         super(OpenBibleStoryForm, self).__init__(*args, **kwargs)
         self.fields["language"].queryset = self.fields["language"].queryset.filter(checking_level=3)
         self.fields["source_text"].queryset = self.fields["source_text"].queryset.filter(checking_level=3)
+        if self.instance.publish_date:
+            self.fields["publish"].initial = True
 
     class Meta:
         model = OpenBibleStory
@@ -73,7 +77,7 @@ class OpenBibleStoryForm(forms.ModelForm):
             "date_started",
             "notes",
             "offline",
-            "publish_date",
+            "publish",
             "version",
             "source_text",
             "source_version",
@@ -98,7 +102,6 @@ class PublishRequestForm(forms.ModelForm):
             required=True
         )
         if self.instance.pk is not None:
-            print "instance", self.instance.language
             lang = self.instance.language
             if lang:
                 self.fields["language"].widget.attrs["data-lang-ln"] = lang.langname
