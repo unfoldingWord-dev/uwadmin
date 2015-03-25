@@ -101,8 +101,8 @@ class PublishRequestForm(forms.ModelForm):
             ),
             required=True
         )
-        if self.instance.pk is not None:
-            lang = self.instance.language
+        if self.is_bound:
+            lang = next(iter(LangCode.objects.filter(langcode=self.data["language"])), None)
             if lang:
                 self.fields["language"].widget.attrs["data-lang-ln"] = lang.langname
                 self.fields["language"].widget.attrs["data-lang-lc"] = lang.langcode
