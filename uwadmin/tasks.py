@@ -2,8 +2,6 @@ from __future__ import absolute_import
 
 import subprocess
 
-from django.db import connection
-
 from celery import task
 
 

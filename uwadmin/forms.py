@@ -88,7 +88,7 @@ class OpenBibleStoryForm(forms.ModelForm):
 
 class PublishRequestForm(forms.ModelForm):
 
-    license_agreements = MultiFileField(min_num=1, max_file_size=1024*1024*5)
+    license_agreements = MultiFileField(min_num=1, max_file_size=5242880)  # 5 MB
 
     def __init__(self, *args, **kwargs):
         super(PublishRequestForm, self).__init__(*args, **kwargs)

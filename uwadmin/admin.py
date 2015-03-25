@@ -106,4 +106,3 @@ admin.site.register(ConnectionType, ConnectionTypeAdmin)
 admin.site.register(RecentCommunication, RecentCommunicationAdmin)
 admin.site.register(OpenBibleStory, OpenBibleStoryAdmin)
 admin.site.register(PublishRequest, PublishRequestAdmin)
-

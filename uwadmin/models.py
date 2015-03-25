@@ -166,4 +166,3 @@ class PublishRequest(models.Model):
 class LicenseAgreement(models.Model):
     publish_request = models.ForeignKey(PublishRequest)
     document = models.FileField(upload_to="agreements/")
-

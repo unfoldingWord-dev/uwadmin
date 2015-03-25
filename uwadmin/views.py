@@ -112,7 +112,7 @@ class OpenBibleStoryCreateView(LoginRequiredMixin, CreateView):
         # for contrib in get_contrib(self.lang):
         #     entry.contributors.add(contrib)
         if self.object.publish_date is not None:
-            publish.send(sender=self, obs=self.object)
+            published.send(sender=self, obs=self.object)
         return redirect(self.get_success_url())
 
 
@@ -185,10 +185,9 @@ class PublishRequestCreateView(CreateView):
 
 def languages_autocomplete(request):
     term = request.GET.get("q").lower().encode("utf-8")
-    langs = LangCode.objects.filter(Q(langcode__icontains=term)|Q(langname__icontains=term))
+    langs = LangCode.objects.filter(Q(langcode__icontains=term) | Q(langname__icontains=term))
     d = [
         {"ln": x.langname, "lc": x.langcode, "gl": x.gateway_flag}
         for x in langs
     ]
     return JsonResponse({"results": d, "count": len(d), "term": term})
-
