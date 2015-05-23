@@ -33,3 +33,18 @@
         </div>
     </div>
 {% endblock %}
+
+
+{% block extra_script %}
+    <script>
+    $(function() {
+
+        $('#id_publish').click(function() {
+            var disable = !this.checked;
+            $('#id_checking_level').attr('disabled', disable);
+            $('#id_checking_entity').attr('disabled', disable);
+            $('#id_version').attr('disabled', disable);
+        });
+    });
+    </script>
+{% endblock %}

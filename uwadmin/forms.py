@@ -68,6 +68,10 @@ class OpenBibleStoryForm(forms.ModelForm):
         self.fields["source_text"].queryset = self.fields["source_text"].queryset.filter(checking_level=3)
         if self.instance.publish_date:
             self.fields["publish"].initial = True
+        if not self.fields["publish"].initial:
+            self.fields["version"].widget.attrs["disabled"] = "disabled"
+            self.fields["checking_entity"].widget.attrs["disabled"] = "disabled"
+            self.fields["checking_level"].widget.attrs["disabled"] = "disabled"
 
     class Meta:
         model = OpenBibleStory
@@ -77,10 +81,10 @@ class OpenBibleStoryForm(forms.ModelForm):
             "date_started",
             "notes",
             "offline",
-            "publish",
-            "version",
             "source_text",
             "source_version",
+            "publish",
+            "version",
             "checking_entity",
             "checking_level"
         ]
