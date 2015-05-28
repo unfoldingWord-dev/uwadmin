@@ -64,7 +64,7 @@ class OpenBibleStoryForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(OpenBibleStoryForm, self).__init__(*args, **kwargs)
-        self.fields["language"].queryset = self.fields["language"].queryset.filter(checking_level=3)
+        self.fields["language"].queryset = self.fields["language"].queryset.all()
         self.fields["source_text"].queryset = self.fields["source_text"].queryset.filter(checking_level=3)
         if self.instance.publish_date:
             self.fields["publish"].initial = True
@@ -105,17 +105,36 @@ class PublishRequestForm(forms.ModelForm):
             ),
             required=True
         )
-        if self.is_bound:
-            lang = next(iter(LangCode.objects.filter(langcode=self.data["language"])), None)
+        self.fields["source_text"] = forms.CharField(
+            widget=forms.TextInput(
+                attrs={
+                    "class": "language-selector",
+                    "data-source-url": reverse("names_autocomplete")
+                }
+            ),
+            required=True
+        )
+        if self.instance.pk:
+            lang = self.instance.language
             if lang:
                 self.fields["language"].widget.attrs["data-lang-ln"] = lang.langname
                 self.fields["language"].widget.attrs["data-lang-lc"] = lang.langcode
                 self.fields["language"].widget.attrs["data-lang-gl"] = lang.gateway_flag
+            src_text = self.instance.source_text
+            if src_text:
+                self.fields["source_text"].widget.attrs["data-lang-ln"] = src_text.langname
+                self.fields["source_text"].widget.attrs["data-lang-lc"] = src_text.langcode
+                self.fields["source_text"].widget.attrs["data-lang-gl"] = src_text.gateway_flag
 
     def clean_language(self):
         lc = self.cleaned_data["language"]
         if lc:
             return LangCode.objects.get(langcode=lc)
+
+    def clean_source_text(self):
+        slc = self.cleaned_data["source_text"]
+        if slc:
+            return LangCode.objects.get(langcode=slc)
 
     class Meta:
         model = PublishRequest
@@ -123,6 +142,8 @@ class PublishRequestForm(forms.ModelForm):
             "requestor",
             "resource",
             "language",
+            "source_text",
+            "source_version",
             "checking_level",
             "contributors",
             "license_agreements"

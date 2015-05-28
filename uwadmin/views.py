@@ -13,6 +13,7 @@ from account.mixins import LoginRequiredMixin
 from .forms import RecentComForm, ConnectionForm, OpenBibleStoryForm, PublishRequestForm
 from .models import Contact, OpenBibleStory, LangCode, PublishRequest
 from .signals import published
+from .tasks import send_request_email
 
 
 @login_required
@@ -161,6 +162,11 @@ class OpenBibleStoryUpdateView(LoginRequiredMixin, UpdateView):
 class OpenBibleStoryListView(LoginRequiredMixin, ListView):
     model = OpenBibleStory
 
+    def get_context_data(self, **kwargs):
+        context = super(OpenBibleStoryListView, self).get_context_data(**kwargs)
+        context["publish_requests"] = PublishRequest.objects.filter(approved_at=None, resource="obs")
+        return context
+
     def get_queryset(self, **kwargs):
         qs = super(OpenBibleStoryListView, self).get_queryset(**kwargs)
         qs = qs.order_by("language__langname", "-created")
@@ -179,8 +185,22 @@ class PublishRequestCreateView(CreateView):
         self.object = form.save()
         for each in form.cleaned_data["license_agreements"]:
             self.object.licenseagreement_set.create(document=each)
+        # to do:
+        # check validity of request
         messages.info(self.request, "Thank you for your request")
+        send_request_email(self.object.pk)
         return redirect("publish_request")
+
+
+class PublishRequestUpdateView(LoginRequiredMixin, UpdateView):
+    model = PublishRequest
+    form_class = PublishRequestForm
+
+    def form_valid(self, form):
+        # to do:
+        # check validity of request...
+        messages.info(self.request, "Publish Request Approved")
+        return redirect("obs_list")
 
 
 def languages_autocomplete(request):

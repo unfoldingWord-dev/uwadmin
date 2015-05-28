@@ -18,9 +18,20 @@
                     <form action="" method="post" class="form" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form|bootstrap }}
+                        {% if form.instance.pk %}
+                            <div>
+                            <ul class="list-unstyled">
+                                {% for la in form.instance.licenseagreement_set.all %}
+                                    <li><a href="{{ la.document.url }}" class="btn btn-primary"><i class="fa fa-paperclip"></i> View</a> {{ la.document.name }}</li>
+                                {% endfor %}
+                            </ul>
+                            </div>
+                            <button type="submit" class="btn btn-primary pull-right">Approve</button>
+                        {% else %}
                         <button type="submit" class="btn btn-primary pull-right">
                             Submit
                         </button>
+                        {% endif %}
                     </form>
                 </div>
             </div>

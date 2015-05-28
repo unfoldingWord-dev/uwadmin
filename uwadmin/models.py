@@ -157,10 +157,13 @@ class Comment(models.Model):
 class PublishRequest(models.Model):
     requestor = models.CharField(max_length=100)
     resource = models.CharField(max_length=20, choices=[("obs", "Open Bible Stories")], default="obs")
-    language = models.ForeignKey(LangCode)
+    language = models.ForeignKey(LangCode, related_name="publish_requests")
     checking_level = models.IntegerField(choices=CHECKING_LEVEL_CHOICES)
+    source_text = models.ForeignKey(LangCode, related_name="source_publish_requests", null=True)
+    source_version = models.CharField(max_length=10, blank=True)
     contributors = models.TextField(blank=True)
     created_at = models.DateTimeField(default=timezone.now)
+    approved_at = models.DateTimeField(default=None, blank=True, null=True, db_index=True)
 
 
 class LicenseAgreement(models.Model):
