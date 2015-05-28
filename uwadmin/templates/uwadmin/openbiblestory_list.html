@@ -13,6 +13,33 @@
 
     <div class="panel panel-default">
         <div class="panel-heading panel-heading-with-table">
+            <h2 class="panel-title">{% trans "Publish Requests" %}</h2>
+        </div>
+        {% if publish_requests %}
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Requestor</th>
+                        <th>Resource</th>
+                        <th>Language</th>
+                        <th>Checking Level</th>
+                        <th>Contributors</th>
+                        <th>Created at</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pr in publish_requests %}
+                        <tr>
+                            {% include "uwadmin/_pr_row_data.html" with pr=pr %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="panel-body">None</div>
+        {% endif %}
+        <div class="panel-heading panel-heading-with-table">
             <a href="{% url "obs_create" %}" class="btn btn-xs btn-primary pull-right">
                 <i class="fa fa-plus"></i>
                 Add
