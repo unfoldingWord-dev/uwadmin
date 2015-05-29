@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 
 from django.contrib.auth.models import User
 
@@ -7,6 +8,7 @@ import requests
 import reversion
 
 
+@python_2_unicode_compatible
 class LangCode(models.Model):
     langcode = models.CharField(max_length=25, unique=True, verbose_name="Language Code")
     langname = models.CharField(max_length=255, verbose_name="Language Name")
@@ -35,7 +37,7 @@ class LangCode(models.Model):
     class Meta:
         ordering = ["langcode"]
 
-    def __unicode__(self):
+    def __str__(self):
         return self.langcode
 
 
@@ -121,7 +123,7 @@ class OpenBibleStory(models.Model):
     language = models.OneToOneField(LangCode, related_name="open_bible_story", verbose_name="Language")
 
     # Tracking
-    contact = models.ForeignKey(Contact, related_name="open_bible_stories")
+    contact = models.ForeignKey(Contact, related_name="open_bible_stories", null=True, blank=True)
     date_started = models.DateField()
     notes = models.TextField(blank=True)
     offline = models.BooleanField(default=False)
@@ -154,6 +156,7 @@ class Comment(models.Model):
     created_by = models.ForeignKey(User)
 
 
+@python_2_unicode_compatible
 class PublishRequest(models.Model):
     requestor = models.CharField(max_length=100)
     resource = models.CharField(max_length=20, choices=[("obs", "Open Bible Stories")], default="obs")
@@ -164,6 +167,9 @@ class PublishRequest(models.Model):
     contributors = models.TextField(blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     approved_at = models.DateTimeField(default=None, blank=True, null=True, db_index=True)
+
+    def __str__(self):
+        return "({0}) for {1} in language: {2}".format(str(self.pk), str(self.get_resource_display()), self.language)
 
 
 class LicenseAgreement(models.Model):

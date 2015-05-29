@@ -17,6 +17,7 @@ from .views import (
     OpenBibleStoryUpdateView,
     PublishRequestCreateView,
     PublishRequestUpdateView,
+    PublishRequestDeleteView,
 )
 
 
@@ -36,6 +37,7 @@ urlpatterns = patterns(
     url(r"^obs/(?P<code>[\w-]+)/update/$", OpenBibleStoryUpdateView.as_view(), name="obs_update"),
     url(r"^publish/request/$", PublishRequestCreateView.as_view(), name="publish_request"),
     url(r"^publish/request/(?P<pk>\d+)", PublishRequestUpdateView.as_view(), name="publish_request_update"),
+    url(r"^publish/request-reject/(?P<pk>\d+)", PublishRequestDeleteView.as_view(), name="publish_request_delete"),
     url(r"^ac/langnames/", "uwadmin.views.languages_autocomplete", name="names_autocomplete"),
 )
 

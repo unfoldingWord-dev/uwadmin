@@ -26,7 +26,10 @@
                                 {% endfor %}
                             </ul>
                             </div>
-                            <button type="submit" class="btn btn-primary pull-right">Approve</button>
+                            <div class="actions pull-right">
+                              <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Approve</button>
+                              <a href="{% url "publish_request_delete" form.instance.pk %}" class="btn btn-warning"><i class="fa fa-ban"></i> Reject</a>
+                            </div>
                         {% else %}
                         <button type="submit" class="btn btn-primary pull-right">
                             Submit
