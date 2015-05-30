@@ -20,13 +20,14 @@
               },
               initSelection: function (element, callback) {
                 data = {
+                  "pk": element.data("lang-pk"),
                   "ln": element.data("lang-ln"),
                   "lc": element.data("lang-lc"),
                   "gl": element.data("lang-gl")
                 }
                 callback(data);
               },
-              id: function (lang) { return lang.lc; },
+              id: function (lang) { return lang.pk; },
               formatResult: function (lang) {
                 gl = "";
                 if (lang.gl) gl = "[gateway]";

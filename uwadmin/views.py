@@ -1,9 +1,9 @@
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import JsonResponse
 from django.db.models import Q
 from django.shortcuts import redirect, get_object_or_404
 from django.utils import timezone
-from django.views.generic import CreateView, DetailView, ListView, UpdateView
+from django.views.generic import CreateView, DetailView, ListView, UpdateView, DeleteView
 
 from django.contrib import messages
 
@@ -13,6 +13,7 @@ from account.mixins import LoginRequiredMixin
 from .forms import RecentComForm, ConnectionForm, OpenBibleStoryForm, PublishRequestForm
 from .models import Contact, OpenBibleStory, LangCode, PublishRequest
 from .signals import published
+from .tasks import send_request_email, approve_publish_request
 
 
 @login_required
@@ -161,6 +162,11 @@ class OpenBibleStoryUpdateView(LoginRequiredMixin, UpdateView):
 class OpenBibleStoryListView(LoginRequiredMixin, ListView):
     model = OpenBibleStory
 
+    def get_context_data(self, **kwargs):
+        context = super(OpenBibleStoryListView, self).get_context_data(**kwargs)
+        context["publish_requests"] = PublishRequest.objects.filter(approved_at=None, resource="obs")
+        return context
+
     def get_queryset(self, **kwargs):
         qs = super(OpenBibleStoryListView, self).get_queryset(**kwargs)
         qs = qs.order_by("language__langname", "-created")
@@ -179,15 +185,40 @@ class PublishRequestCreateView(CreateView):
         self.object = form.save()
         for each in form.cleaned_data["license_agreements"]:
             self.object.licenseagreement_set.create(document=each)
+        # to do:
+        # check validity of request
         messages.info(self.request, "Thank you for your request")
+        send_request_email(self.object.pk)
         return redirect("publish_request")
+
+
+class PublishRequestUpdateView(LoginRequiredMixin, UpdateView):
+    model = PublishRequest
+    form_class = PublishRequestForm
+
+    def form_valid(self, form):
+        # to do:
+        # check validity of request...
+        self.object = form.save()
+        messages.info(self.request, "Publish Request Approved")
+        obs_id = approve_publish_request(self.object.pk, self.request.user.id)
+        return redirect("obs_update", code=self.object.language.langcode)
+
+
+class PublishRequestDeleteView(LoginRequiredMixin, DeleteView):
+    model = PublishRequest
+    success_url = reverse_lazy("obs_list")
+
+    def delete(self, request, *args, **kwargs):
+        messages.info(self.request, "Publish Request Rejected/Deleted")
+        return super(PublishRequestDeleteView, self).delete(request, *args, **kwargs)
 
 
 def languages_autocomplete(request):
     term = request.GET.get("q").lower().encode("utf-8")
     langs = LangCode.objects.filter(Q(langcode__icontains=term) | Q(langname__icontains=term))
     d = [
-        {"ln": x.langname, "lc": x.langcode, "gl": x.gateway_flag}
+        {"pk": x.id, "ln": x.langname, "lc": x.langcode, "gl": x.gateway_flag}
         for x in langs
     ]
     return JsonResponse({"results": d, "count": len(d), "term": term})
