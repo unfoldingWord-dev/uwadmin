@@ -105,15 +105,8 @@ class PublishRequestForm(forms.ModelForm):
             ),
             required=True
         )
-        self.fields["source_text"] = forms.CharField(
-            widget=forms.TextInput(
-                attrs={
-                    "class": "language-selector",
-                    "data-source-url": reverse("names_autocomplete")
-                }
-            ),
-            required=True
-        )
+        self.fields["source_text"].queryset = self.fields["source_text"].queryset.filter(checking_level=3)
+
         if self.instance.pk:
             lang = self.instance.language
             if lang:
@@ -121,22 +114,11 @@ class PublishRequestForm(forms.ModelForm):
                 self.fields["language"].widget.attrs["data-lang-ln"] = lang.langname
                 self.fields["language"].widget.attrs["data-lang-lc"] = lang.langcode
                 self.fields["language"].widget.attrs["data-lang-gl"] = lang.gateway_flag
-            src_text = self.instance.source_text
-            if src_text:
-                self.fields["source_text"].widget.attrs["data-lang-pk"] = src_text.id
-                self.fields["source_text"].widget.attrs["data-lang-ln"] = src_text.langname
-                self.fields["source_text"].widget.attrs["data-lang-lc"] = src_text.langcode
-                self.fields["source_text"].widget.attrs["data-lang-gl"] = src_text.gateway_flag
 
     def clean_language(self):
         lang_id = self.cleaned_data["language"]
         if lang_id:
             return LangCode.objects.get(pk=lang_id)
-
-    def clean_source_text(self):
-        st_id = self.cleaned_data["source_text"]
-        if st_id:
-            return LangCode.objects.get(id=st_id)
 
     class Meta:
         model = PublishRequest
