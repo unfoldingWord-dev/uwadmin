@@ -18,8 +18,8 @@ def publish(langcode):
 def send_request_email(request_id):
     notify_requestor_received.delay(request_id)
     pr = PublishRequest.objects.get(pk=request_id)
-    html_contents = render_to_string("./uwadmin/email_html_publishrequest.html", {"publish_request": pr})
-    plain_contents = render_to_string("./uwadmin/email_plain_publishrequest.html", {"publish_request": pr})
+    html_contents = render_to_string("./email/publishrequest_notify_html.html", {"publish_request": pr})
+    plain_contents = render_to_string("./email/publishrequest_notify_plain.html", {"publish_request": pr})
     send_mail("Publish Request #{0}".format(str(pr.pk)),
               plain_contents,
               settings.EMAIL_FROM,
