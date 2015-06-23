@@ -212,7 +212,8 @@ class PublishRequestDeleteView(LoginRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.info(self.request, "Publish Request Rejected/Deleted")
         pr = self.get_object()
-        notify_requestor_rejected(pr.pk)
+        # todo: when we figure out how to indicate the request is rejected... send an email
+        # notify_requestor_rejected(pr.pk)
         return super(PublishRequestDeleteView, self).delete(request, *args, **kwargs)
 
 
