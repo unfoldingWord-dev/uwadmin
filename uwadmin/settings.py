@@ -140,6 +140,7 @@ INSTALLED_APPS = [
 
     # project
     "uwadmin",
+    "uwutils"
 ]
 
 # A sample logging configuration. The only tangible logging
