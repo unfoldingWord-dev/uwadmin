@@ -27,6 +27,7 @@ TAG_LINE_RE = re.compile(ur'\n\*\*.*openbiblestories', re.UNICODE | re.DOTALL)
 OBS_DEFAULT_NAME = 'Open Bible Stories'
 OBS_DEFAULT_TAGLINE = 'an unrestricted visual mini-Bible in any language'
 IMG_URL = 'https://api.unfoldingword.org/obs/jpg/1/{0}/360px/obs-{0}-{1}.jpg'
+PAGES_URL_PATTERN = 'https://door43.org/{lang_code}/obs/{chapter}'
 
 # OBS Frameset Definition
 OBS_FRAMESET = {"01-01", "01-02", "01-03", "01-04", "01-05", "01-06", "01-07", "01-08", "01-09", "01-10", "01-11",
@@ -111,6 +112,10 @@ class OBSTranslation(object):
         self._qa_performed = False
         self.today = ''.join(str(datetime.date.today()).rsplit('-')[0:3])
 
+    def append_issue(self, description, chapter):
+        self.qa_issues_list.append({"description": description,
+                                    "url": PAGES_URL_PATTERN.format(lang_code=self.lang_code, chapter=chapter)})
+
     @staticmethod
     def get_img(link, frame_id):
         links = IMG_LINK_RE.search(link)
@@ -128,20 +133,21 @@ class OBSTranslation(object):
         return text
 
     def _get_chapter(self, chapter_path):
-        chapter_data = {}
+        chapter_data = {"frames": []}
         chapter_raw = codecs.open(chapter_path, 'r', encoding='utf-8').read()
+        chapter_number = NUM_RE.search(chapter_path).group(1)
         titles = TITLE_RE.search(chapter_raw)
         if titles:
             chapter_data['title'] = titles.group(0).replace('=', '').strip()
         else:
             chapter_data['title'] = u'NOT FOUND'
-            self.qa_issues_list.append(u"NOT FOUND: title in {0}".format(chapter_path))
+            self.append_issue(u"NOT FOUND: title in {0}".format(chapter_path), chapter_number)
         refs = REF_RE.search(chapter_raw)
         if refs:
             chapter_data['ref'] = refs.group(0).replace('/', '').strip()
         else:
             chapter_data['ref'] = u'NOT FOUND'
-            self.qa_issues_list.append(u"NOT FOUND: reference in {0}".format(chapter_path))
+            self.append_issue(u"NOT FOUND: reference in {0}".format(chapter_path), chapter_number)
         for frame in FRAME_RE.findall(chapter_raw):
             frame_lines = frame.split('\n')
             frame_ids = FRID_RE.search(frame)
@@ -149,11 +155,13 @@ class OBSTranslation(object):
                 frame_id = frame_ids.group(0)
             else:
                 frame_id = u"NOT FOUND"
-                self.qa_issues_list.append(u"NOT FOUND: frame id in {0}".format(chapter_path))
+                self.append_issue(u"NOT FOUND: frame id in {0}".format(chapter_path), chapter_number)
             frame_data = {"id": frame_id,
                           "img": self.get_img(frame_lines[0].strip(), frame_id),
                           "text": self.get_frame_text(frame_lines[1:])
                           }
+            chapter_data["frames"].append(frame_data)
+        return chapter_data
 
     def _get_front_matter(self):
         front_data = {}
@@ -178,20 +186,34 @@ class OBSTranslation(object):
     def _get_back_matter(self):
         back_path = os.path.join(self.obs_path, "back-matter.txt")
 
-    def _get_frames(self):
-        page_list = glob.glob('{0}/{1}/obs/[0-5][0-9].txt'.format(self.base_path, self.lang_code))
+    def _get_chapters(self):
+        page_list = glob.glob(os.path.join(self.base_path, self.lang_code, 'obs') + '/[0-5][0-9].txt')
         chapter_list = []
         for page in page_list:
             chapter_data = {"number": NUM_RE.search(page).group(1),
-                            "frames": []
+                            "chapter_data": self._get_chapter(page)
                             }
             chapter_list.append(chapter_data)
+        return chapter_list
 
-    def _check_frames(self):
-        self._get_frames()
+    def check_frames(self):
+        frame_set = set()
+        for c in self._get_chapters():
+            for f in c["chapter_data"]["frames"]:
+                if len(f["text"]) > 10:
+                    frame_set.add(f["id"])
+        obs_diff = OBS_FRAMESET.difference(frame_set)
+        for d in obs_diff:
+            self.append_issue("missing frame: {0}".format(d), d[0:2])
 
     def qa_check(self):
-        self._check_frames()
+        self._qa_performed = True
+        if os.path.exists(os.path.join(self.base_path, self.lang_code, 'obs')):
+            self.check_frames()
+        else:
+            self.append_issue("OBS does not seem to exist for that language", "")
+        self.qa_valid_flag = True if not len(self.qa_issues_list) else False
+        return self.qa_valid_flag
 
     def publish(self):
         pass

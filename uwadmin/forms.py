@@ -1,9 +1,12 @@
 from django import forms
+from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.utils.formats import mark_safe
 
 from multiupload.fields import MultiFileField
 
 from .models import RecentCommunication, Connection, OpenBibleStory, PublishRequest, LangCode
+from uwutils.translations import OBSTranslation
 
 
 class RecentComForm(forms.ModelForm):
@@ -119,6 +122,15 @@ class PublishRequestForm(forms.ModelForm):
         lang_id = self.cleaned_data["language"]
         if lang_id:
             return LangCode.objects.get(pk=lang_id)
+
+    def clean(self):
+        cleaned_data = super(PublishRequestForm, self).clean()
+        lang = cleaned_data["language"]
+        obs = OBSTranslation(base_path=settings.PAGES_ROOT, lang_code=lang.langcode)
+        if not obs.qa_check():
+            error_list_html = "".join(['<li><a href="{url}"><i class="fa fa-external-link"></i></a> {description}</li>'.format(**err) for err in obs.qa_issues_list])
+            raise forms.ValidationError(mark_safe("The language does not pass the quality check for the following reasons: <ul>" + error_list_html + "</ul>"))
+        return cleaned_data
 
     class Meta:
         model = PublishRequest

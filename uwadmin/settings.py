@@ -200,6 +200,10 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ["json", "msgpack", "yaml"]   # for security reasons, don't allow pickle
 
 
+# Location of dokuwiki related stuff
+PAGES_ROOT = '/var/www/vhosts/door43.org/httpdocs/data/gitrepo/pages'
+
+
 # Override above settings with anything in local_settings
 try:
     from local_settings import *  # noqa
