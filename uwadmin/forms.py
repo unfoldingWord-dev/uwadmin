@@ -117,6 +117,15 @@ class PublishRequestForm(forms.ModelForm):
                 self.fields["language"].widget.attrs["data-lang-ln"] = lang.langname
                 self.fields["language"].widget.attrs["data-lang-lc"] = lang.langcode
                 self.fields["language"].widget.attrs["data-lang-gl"] = lang.gateway_flag
+        elif self.data.get("language", None):
+            try:
+                lang = LangCode.objects.get(pk=self.data["language"])
+                self.fields["language"].widget.attrs["data-lang-pk"] = lang.id
+                self.fields["language"].widget.attrs["data-lang-ln"] = lang.langname
+                self.fields["language"].widget.attrs["data-lang-lc"] = lang.langcode
+                self.fields["language"].widget.attrs["data-lang-gl"] = lang.gateway_flag
+            except Exception as ex:
+                pass
 
     def clean_language(self):
         lang_id = self.cleaned_data["language"]
