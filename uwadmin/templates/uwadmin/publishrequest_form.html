@@ -32,7 +32,11 @@
                             </div>
                         {% else %}
                         <button type="submit" class="btn btn-primary pull-right">
+                            {% if form.errors %}
+                                Re-Submit
+                                {% else %}
                             Submit
+                                {% endif %}
                         </button>
                         {% endif %}
                     </form>
