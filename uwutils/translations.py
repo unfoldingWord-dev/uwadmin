@@ -184,7 +184,14 @@ class OBSTranslation(object):
         return front_data
 
     def _get_back_matter(self):
+        back_data = {}
         back_path = os.path.join(self.obs_path, "back-matter.txt")
+        if os.path.exists(back_path):
+            back = codecs.open(back_path, 'r', encoding='utf-8').read()
+            back_data["language"] = self.lang_code
+            back_data["back-matter"] = clean_text(back)
+            back_data["date_modified"] = datetime.date.today()
+        return back_data
 
     def _get_chapters(self):
         page_list = glob.glob(os.path.join(self.base_path, self.lang_code, 'obs') + '/[0-5][0-9].txt')
