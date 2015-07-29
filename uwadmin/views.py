@@ -239,5 +239,5 @@ def source_languages_autocomplete(request):
 
 def ajax_language_version(request):
     search_lang = request.GET.get("q").lower().encode("utf-8")
-    print "ajax call for language version: " + search_lang
-    return JsonResponse({"current_version": "1.2.3", "new_version": "1.3.4"})
+    lang = get_object_or_404(LangCode, pk=search_lang)
+    return JsonResponse({"current_version": lang.version})
