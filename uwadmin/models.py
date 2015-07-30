@@ -14,12 +14,14 @@ class LangCode(models.Model):
     langname = models.CharField(max_length=255, verbose_name="Language Name")
     gateway_flag = models.BooleanField(default=False)
     checking_level = models.IntegerField(null=True)
+    version = models.CharField(max_length=25, default="")
 
     @classmethod
     def update_checking_levels(cls):
         catalog = requests.get("https://api.unfoldingword.org/obs/txt/1/obs-catalog.json").json()
         for lang in catalog:
-            cls.objects.filter(langcode=lang["language"]).update(checking_level=lang["status"]["checking_level"])
+            cls.objects.filter(langcode=lang["language"]).update(checking_level=lang["status"]["checking_level"],
+                                                                 version=lang["status"]["version"])
 
     @classmethod
     def sync(cls):

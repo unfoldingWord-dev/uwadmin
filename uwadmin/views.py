@@ -225,3 +225,19 @@ def languages_autocomplete(request):
         for x in langs
     ]
     return JsonResponse({"results": d, "count": len(d), "term": term})
+
+
+def source_languages_autocomplete(request):
+    term = request.GET.get("q").lower().encode("utf-8")
+    langs = LangCode.objects.filter(checking_level=3).filter(Q(langcode__icontains=term) | Q(langname__icontains=term))
+    d = [
+        {"pk": x.id, "ln": x.langname, "lc": x.langcode, "gl": x.gateway_flag, "ver": x.version}
+        for x in langs
+    ]
+    return JsonResponse({"results": d, "count": len(d), "term": term})
+
+
+def ajax_language_version(request):
+    search_lang = request.GET.get("q").lower().encode("utf-8")
+    lang = get_object_or_404(LangCode, pk=search_lang)
+    return JsonResponse({"current_version": lang.version})

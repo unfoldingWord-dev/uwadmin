@@ -39,6 +39,8 @@ urlpatterns = patterns(
     url(r"^publish/request/(?P<pk>\d+)", PublishRequestUpdateView.as_view(), name="publish_request_update"),
     url(r"^publish/request-reject/(?P<pk>\d+)", PublishRequestDeleteView.as_view(), name="publish_request_delete"),
     url(r"^ac/langnames/", "uwadmin.views.languages_autocomplete", name="names_autocomplete"),
+    url(r"^ac/src-langnames/", "uwadmin.views.source_languages_autocomplete", name="source_names_autocomplete"),
+    url(r"^ajax/langversion/", "uwadmin.views.ajax_language_version", name="ajax_language_version")
 )
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
